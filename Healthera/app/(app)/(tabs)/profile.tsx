@@ -8,7 +8,7 @@ type Props = {};
 const ProfileScreen = (props: Props) => {
   return (
     <ThemedView style={{ flex: 1, justifyContent: "center" }}>
-      <Text>ProfileScreen</Text>
+      <ThemedText>ProfileScreen</ThemedText>
       <ThemedView
         style={{ width: "auto", height: 50, backgroundColor: "#00880050" }}
       >

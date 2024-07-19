@@ -9,7 +9,7 @@ type Props = {};
 const SignIn = (props: Props) => {
   return (
     <ThemedView style={{ flex: 1, justifyContent: "center" }}>
-      <Text>SignIn</Text>
+      <ThemedText>SignIn</ThemedText>
       <ThemedView
         style={{ width: "auto", height: 50, backgroundColor: "#00880050" }}
       >

@@ -8,7 +8,7 @@ type Props = {};
 const HomeScreen = (props: Props) => {
   return (
     <ThemedView style={{ flex: 1, justifyContent: "center" }}>
-      <Text>HomeScreen</Text>
+      <ThemedText>HomeScreen</ThemedText>
       <ThemedView
         style={{ width: "auto", height: 50, backgroundColor: "#00880050" }}
       >

@@ -8,7 +8,7 @@ type Props = {};
 const ChatScreen = (props: Props) => {
   return (
     <ThemedView style={{ flex: 1, justifyContent: "center" }}>
-      <Text>ChatScreen</Text>
+      <ThemedText>ChatScreen</ThemedText>
       <ThemedView
         style={{ width: "auto", height: 50, backgroundColor: "#00880050" }}
       >

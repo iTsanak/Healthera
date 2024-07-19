@@ -8,7 +8,7 @@ type Props = {};
 const CalendarScreen = (props: Props) => {
   return (
     <ThemedView style={{ flex: 1, justifyContent: "center" }}>
-      <Text>CalendarScreen</Text>
+      <ThemedText>CalendarScreen</ThemedText>
       <ThemedView
         style={{ width: "auto", height: 50, backgroundColor: "#00880050" }}
       >
