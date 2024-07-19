@@ -14,10 +14,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
 import FormTextField from "@/components/Auth/form-text-field";
 import PrimaryButton from "@/components/Button/primary-button";
+import { useSession } from "@/providers/session-provider";
 
 type Props = {};
 
-const SignUp = (props: Props) => {
+const SignUpScreen = (props: Props) => {
+  const { singUp } = useSession();
   return (
     <ThemedView className="flex-1">
       <KeyboardAvoidingView
@@ -28,6 +30,7 @@ const SignUp = (props: Props) => {
           <View className="flex-1 items-center">
             <SimpleTopNavBar />
             <ScrollView
+              showsVerticalScrollIndicator={false}
               className="w-[80%] flex-1"
               keyboardShouldPersistTaps="handled"
             >
@@ -73,9 +76,10 @@ const SignUp = (props: Props) => {
                 <PrimaryButton
                   handlePress={() => {
                     console.log("pressed");
+                    singUp();
                   }}
                   title="Sign Up"
-                  className="mt-4 w-48"
+                  className="mb-20 mt-4 w-48"
                 />
               </View>
             </ScrollView>
@@ -86,4 +90,4 @@ const SignUp = (props: Props) => {
   );
 };
 
-export default SignUp;
+export default SignUpScreen;
