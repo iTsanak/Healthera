@@ -10,9 +10,7 @@ const SignUp = (props: Props) => {
   return (
     <ThemedView style={{ flex: 1, justifyContent: "center" }}>
       <ThemedText>SignUp</ThemedText>
-      <ThemedView
-        style={{ width: "auto", height: 50, backgroundColor: "#00880050" }}
-      >
+      <ThemedView className="h-40 w-full bg-green-500">
         <TouchableOpacity
           style={{ flex: 1 }}
           onPress={() => {
