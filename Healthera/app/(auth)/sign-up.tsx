@@ -15,11 +15,51 @@ import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
 import FormTextField from "@/components/Auth/form-text-field";
 import PrimaryButton from "@/components/Button/primary-button";
 import { useSession } from "@/providers/session-provider";
+import * as z from "zod";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {};
 
+const formSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .min(8, "Password too short"),
+  email: z.string().min(1, "Email is required").email("Invalid Email format"),
+  phoneNumber: z.string().min(1, "Phone number is required"),
+  dob: z.string().min(1, "Date of Birth is required"),
+});
+
 const SignUpScreen = (props: Props) => {
   const { singUp } = useSession();
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      password: "",
+      email: "",
+      phoneNumber: "",
+      dob: "",
+    },
+  });
+
+  const isLoading = form.formState.isSubmitting;
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      console.log("SUBMITTING SIGN UP FORM", values);
+      form.reset();
+      singUp(values);
+      router.dismissAll();
+      router.replace("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <ThemedView className="flex-1">
       <KeyboardAvoidingView
@@ -34,39 +74,99 @@ const SignUpScreen = (props: Props) => {
               className="w-[80%] flex-1"
               keyboardShouldPersistTaps="handled"
             >
-              <FormTextField
-                title="Full Name"
-                placeholder="John Smith..."
-                handleTextChange={() => {}}
-                className="my-4 h-20"
+              <Controller
+                control={form.control}
+                name="name"
+                disabled={isLoading}
+                render={({
+                  field: { value, onChange, onBlur },
+                  fieldState: { error },
+                }) => (
+                  <FormTextField
+                    title="Full Name"
+                    placeholder="John Smith..."
+                    handleTextChange={onChange}
+                    value={value}
+                    className="my-2"
+                    error={error}
+                  />
+                )}
               />
-              <FormTextField
-                title="Password"
-                placeholder="*****"
-                handleTextChange={() => {}}
-                isSecureText={true}
-                className="mb-4 h-20"
+              <Controller
+                control={form.control}
+                name="password"
+                disabled={isLoading}
+                render={({
+                  field: { value, onChange, onBlur },
+                  fieldState: { error },
+                }) => (
+                  <FormTextField
+                    title="Password"
+                    placeholder="*****"
+                    handleTextChange={onChange}
+                    value={value}
+                    className="my-2"
+                    error={error}
+                    isSecureText={true}
+                  />
+                )}
               />
-              <FormTextField
-                title="Email"
-                placeholder="email@domain.com"
-                handleTextChange={() => {}}
-                className="mb-4 h-20"
-                keyboardType="email-address"
+              <Controller
+                control={form.control}
+                name="email"
+                disabled={isLoading}
+                render={({
+                  field: { value, onChange, onBlur },
+                  fieldState: { error },
+                }) => (
+                  <FormTextField
+                    title="Email"
+                    placeholder="email@domain.com"
+                    handleTextChange={onChange}
+                    value={value}
+                    className="my-2"
+                    error={error}
+                    keyboardType="email-address"
+                  />
+                )}
               />
-              <FormTextField
-                title="Mobile Number"
-                placeholder="123-123-1234"
-                handleTextChange={() => {}}
-                className="mb-4 h-20"
-                keyboardType="phone-pad"
+              <Controller
+                control={form.control}
+                name="phoneNumber"
+                disabled={isLoading}
+                render={({
+                  field: { value, onChange, onBlur },
+                  fieldState: { error },
+                }) => (
+                  <FormTextField
+                    title="Mobile Number"
+                    placeholder="123-123-1234"
+                    handleTextChange={onChange}
+                    value={value}
+                    className="my-2"
+                    error={error}
+                    keyboardType="phone-pad"
+                  />
+                )}
               />
-              <FormTextField
-                title="Date Of Birth"
-                placeholder="DD/MM/YYYY"
-                handleTextChange={() => {}}
-                className="mb-8 h-20"
-                keyboardType="number-pad"
+              <Controller
+                control={form.control}
+                name="dob"
+                disabled={isLoading}
+                render={({
+                  field: { value, onChange, onBlur },
+                  fieldState: { error },
+                }) => (
+                  <FormTextField
+                    title="Date Of Birth"
+                    placeholder="DD/MM/YYYY"
+                    handleTextChange={onChange}
+                    value={value}
+                    className="my-2"
+                    error={error}
+                    keyboardType="number-pad"
+                  />
+                )}
               />
 
               <View className="items-center">
@@ -74,10 +174,7 @@ const SignUpScreen = (props: Props) => {
                 <ThemedText>Terms of Use and Privacy Policy</ThemedText>
 
                 <PrimaryButton
-                  handlePress={() => {
-                    console.log("pressed");
-                    singUp();
-                  }}
+                  handlePress={form.handleSubmit((data: any) => onSubmit(data))}
                   title="Sign Up"
                   className="mb-20 mt-4 w-48"
                 />
