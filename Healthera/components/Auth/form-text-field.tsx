@@ -69,7 +69,7 @@ const FormTextField = forwardRef<TextInput, FormTextFieldProps>(
             <ThemedText className={titleClassName}>{title}</ThemedText>
           </View>
           <View
-            className={`${isFocused ? "bg-accent-light/60 dark:bg-accent-dark/70" : "bg-accent-light/20 dark:bg-accent-dark/20"} relative h-14 flex-1 rounded-xl`}
+            className={`${isFocused ? "bg-accent-light/60 dark:bg-accent-dark/60" : "bg-secondary-light/20 dark:bg-secondary-dark/20"} relative h-14 flex-1 rounded-xl`}
           >
             <View className="mx-2 flex-1 flex-row items-center">
               <TextInput
