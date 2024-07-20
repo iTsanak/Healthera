@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  useColorScheme,
 } from "react-native";
 import React from "react";
 import { ThemedView } from "@/components/ThemedView";
@@ -18,6 +19,8 @@ import { useSession } from "@/providers/session-provider";
 import * as z from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
 
 type Props = {};
 
@@ -33,7 +36,8 @@ const formSchema = z.object({
 });
 
 const SignUpScreen = (props: Props) => {
-  const { singUp } = useSession();
+  const theme = useColorScheme() ?? "dark";
+  const { signUp } = useSession();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -52,7 +56,7 @@ const SignUpScreen = (props: Props) => {
     try {
       console.log("SUBMITTING SIGN UP FORM", values);
       form.reset();
-      singUp(values);
+      signUp(values);
       router.dismissAll();
       router.replace("/");
     } catch (error) {
@@ -169,15 +173,94 @@ const SignUpScreen = (props: Props) => {
                 )}
               />
 
-              <View className="items-center">
-                <ThemedText>By continuing you agree to</ThemedText>
-                <ThemedText>Terms of Use and Privacy Policy</ThemedText>
+              <View className="mt-4 items-center">
+                <ThemedText className="text-xs">
+                  By continuing you agree to
+                </ThemedText>
+                <ThemedText className="text-xs">
+                  <ThemedText
+                    className="text-xs text-secondary-light dark:text-secondary-dark"
+                    onPress={() => {
+                      console.log("pressed");
+                    }}
+                  >
+                    Terms of Use
+                  </ThemedText>{" "}
+                  and{" "}
+                  <ThemedText
+                    className="text-xs text-secondary-light dark:text-secondary-dark"
+                    onPress={() => {
+                      console.log("pressed");
+                    }}
+                  >
+                    Privacy Policy
+                  </ThemedText>
+                </ThemedText>
 
                 <PrimaryButton
                   handlePress={form.handleSubmit((data: any) => onSubmit(data))}
                   title="Sign Up"
-                  className="mb-20 mt-4 w-48"
+                  className="my-4 w-48"
                 />
+
+                <ThemedText>or sign up with</ThemedText>
+
+                <View className="mt-2 flex-row gap-x-2">
+                  <View className="overflow-hidden rounded-full">
+                    <TouchableOpacity
+                      className="bg-secondary-light p-2 dark:bg-secondary-dark"
+                      onPress={() => {
+                        console.log("Pressed");
+                      }}
+                    >
+                      <Ionicons
+                        name="logo-google"
+                        size={30}
+                        color={Colors[theme].background}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <View className="overflow-hidden rounded-full">
+                    <TouchableOpacity
+                      className="bg-secondary-light p-2 dark:bg-secondary-dark"
+                      onPress={() => {
+                        console.log("Pressed");
+                      }}
+                    >
+                      <Ionicons
+                        name="logo-facebook"
+                        size={30}
+                        color={Colors[theme].background}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <View className="overflow-hidden rounded-full">
+                    <TouchableOpacity
+                      className="bg-secondary-light p-2 dark:bg-secondary-dark"
+                      onPress={() => {
+                        console.log("Pressed");
+                      }}
+                    >
+                      <Ionicons
+                        name="finger-print"
+                        size={30}
+                        color={Colors[theme].background}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <ThemedText className="mt-4">
+                  already have an account?{" "}
+                  <ThemedText
+                    className="text-secondary-light dark:text-secondary-dark"
+                    onPress={() => {
+                      console.log("pressed");
+                    }}
+                  >
+                    Log in
+                  </ThemedText>
+                </ThemedText>
               </View>
             </ScrollView>
           </View>
