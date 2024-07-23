@@ -15,6 +15,8 @@ import IconTitleArrow from "@/components/SpecialButtons/icon-title-arrow";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import Avatar from "@/components/Profile/avatar";
 
 type Props = {};
 
@@ -31,44 +33,17 @@ const ProfileScreen = (props: Props) => {
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ alignItems: "center" }}
           >
-            <View className="my-5 w-full items-center justify-center">
-              <View className="relative h-32 w-32">
-                <Pressable
-                  className="h-full w-full"
-                  onPress={() => {
-                    console.log("pressed IMAGE");
-                  }}
-                >
-                  <Image
-                    source={{
-                      uri: "https://utfs.io/f/e96b95ab-b00a-4801-bcc7-4946f71c11f2-cnxr61.jpeg",
-                    }}
-                    className="h-full w-full rounded-full"
-                    resizeMode="cover"
-                  />
-                </Pressable>
-                <Pressable
-                  style={{ backgroundColor: Colors[theme].primary }}
-                  className="absolute bottom-1 right-1 rounded-full p-2"
-                  onPress={() => {
-                    console.log("pressed ICON");
-                  }}
-                >
-                  <Ionicons
-                    name="pencil-outline"
-                    color={Colors[theme].text}
-                    size={20}
-                  />
-                </Pressable>
-              </View>
-              <ThemedText className="mt-4 text-xl font-bold">NAME</ThemedText>
-            </View>
+            <Avatar
+              imageUri="https://utfs.io/f/e96b95ab-b00a-4801-bcc7-4946f71c11f2-cnxr61.jpeg"
+              showName={true}
+            />
             <View className="mb-20 w-[80%] gap-y-5">
               <IconTitleArrow
                 title="Profile"
                 icon="person"
                 handleOnPress={() => {
                   console.log("pressed");
+                  router.push("/update-profile");
                 }}
               />
               <IconTitleArrow
