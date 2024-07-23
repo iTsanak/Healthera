@@ -74,7 +74,7 @@ const SignUpScreen = (props: Props) => {
       >
         <SafeAreaView className="flex-1">
           <View className="flex-1 items-center">
-            <SimpleTopNavBar />
+            <SimpleTopNavBar title="New Account" />
             <ScrollView
               showsVerticalScrollIndicator={false}
               className="w-full"
