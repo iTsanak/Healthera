@@ -1,19 +1,8 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Pressable,
-  Image,
-  useColorScheme,
-} from "react-native";
-import React from "react";
+import { View, ScrollView, useColorScheme } from "react-native";
+import React, { useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
 import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
 import IconTitleArrow from "@/components/SpecialButtons/icon-title-arrow";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import Avatar from "@/components/Profile/avatar";
@@ -22,6 +11,8 @@ type Props = {};
 
 const ProfileScreen = (props: Props) => {
   const theme = useColorScheme() ?? "dark";
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
   return (
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">

@@ -1,26 +1,14 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Pressable,
-  Image,
-  useColorScheme,
-} from "react-native";
+import { View, ScrollView, useColorScheme } from "react-native";
 import React from "react";
 import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
 import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
 import IconTitleArrow from "@/components/SpecialButtons/icon-title-arrow";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import Avatar from "@/components/Profile/avatar";
 
 type Props = {};
 
-const ProfileScreen = (props: Props) => {
+const SettingsScreen = (props: Props) => {
   const theme = useColorScheme() ?? "dark";
   return (
     <ThemedView className="flex-1">
@@ -40,6 +28,7 @@ const ProfileScreen = (props: Props) => {
                 icon="bulb-outline"
                 handleOnPress={() => {
                   console.log("pressed");
+                  router.push("/notification-settings");
                 }}
               />
               <IconTitleArrow
@@ -63,4 +52,4 @@ const ProfileScreen = (props: Props) => {
     </ThemedView>
   );
 };
-export default ProfileScreen;
+export default SettingsScreen;
