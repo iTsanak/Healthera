@@ -49,6 +49,7 @@ const ProfileScreen = (props: Props) => {
                 icon="lock-closed"
                 handleOnPress={() => {
                   console.log("pressed");
+                  router.push("/privacy-policy");
                 }}
               />
               <IconTitleArrow
