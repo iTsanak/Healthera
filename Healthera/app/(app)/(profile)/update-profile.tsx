@@ -64,7 +64,11 @@ const ProfileScreen = (props: Props) => {
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={{ alignItems: "center" }}
             >
-              <Avatar imageUri="https://utfs.io/f/e96b95ab-b00a-4801-bcc7-4946f71c11f2-cnxr61.jpeg" />
+              <Avatar
+                imageUri="https://utfs.io/f/e96b95ab-b00a-4801-bcc7-4946f71c11f2-cnxr61.jpeg"
+                showBadge={true}
+                size={128}
+              />
               <View className="w-[80%]">
                 <Controller
                   control={form.control}

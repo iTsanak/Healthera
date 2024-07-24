@@ -14,13 +14,16 @@ import { ThemedText } from "../ThemedText";
 type Props = {
   imageUri: string;
   showName?: boolean;
+  size?: number;
+  showBadge?: boolean;
 };
 
-const Avatar = ({ imageUri, showName }: Props) => {
+const Avatar = ({ imageUri, showName, size, showBadge }: Props) => {
+  // 32 - 128px
   const theme = useColorScheme() ?? "dark";
   return (
     <View className="my-5 w-full items-center justify-center">
-      <View className="relative h-32 w-32">
+      <View style={{ height: size, width: size }} className="relative">
         <Pressable
           className="h-full w-full"
           onPress={() => {
@@ -35,19 +38,21 @@ const Avatar = ({ imageUri, showName }: Props) => {
             resizeMode="cover"
           />
         </Pressable>
-        <Pressable
-          style={{ backgroundColor: Colors[theme].primary }}
-          className="absolute bottom-1 right-1 rounded-full p-2"
-          onPress={() => {
-            console.log("pressed ICON");
-          }}
-        >
-          <Ionicons
-            name="pencil-outline"
-            color={Colors[theme].text}
-            size={20}
-          />
-        </Pressable>
+        {showBadge && (
+          <Pressable
+            style={{ backgroundColor: Colors[theme].primary }}
+            className="absolute bottom-1 right-1 rounded-full p-2"
+            onPress={() => {
+              console.log("pressed ICON");
+            }}
+          >
+            <Ionicons
+              name="pencil-outline"
+              color={Colors[theme].text}
+              size={20}
+            />
+          </Pressable>
+        )}
       </View>
       <ThemedText
         style={{ display: showName ? "flex" : "none" }}

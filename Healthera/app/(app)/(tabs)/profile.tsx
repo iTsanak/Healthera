@@ -27,6 +27,8 @@ const ProfileScreen = (props: Props) => {
             <Avatar
               imageUri="https://utfs.io/f/e96b95ab-b00a-4801-bcc7-4946f71c11f2-cnxr61.jpeg"
               showName={true}
+              showBadge={true}
+              size={128}
             />
             <View className="mb-20 w-[80%] gap-y-5">
               <IconTitleArrow
