@@ -36,6 +36,7 @@ const SettingsScreen = (props: Props) => {
                 icon="key-outline"
                 handleOnPress={() => {
                   console.log("pressed");
+                  router.push("/password-manager");
                 }}
               />
               <IconTitleArrow

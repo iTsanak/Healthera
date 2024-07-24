@@ -52,8 +52,6 @@ const SignUpScreen = (props: Props) => {
 
   const isLoading = form.formState.isSubmitting;
 
-  console.log("123wqadsfer32qwdrgwqedvfgrw4erds");
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       console.log("SUBMITTING SIGN UP FORM", values);

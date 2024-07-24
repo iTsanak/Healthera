@@ -1,8 +1,7 @@
-import { View, ScrollView, useColorScheme, Switch } from "react-native";
-import React, { useState } from "react";
+import { View, ScrollView, useColorScheme } from "react-native";
+import React from "react";
 import { ThemedView } from "@/components/ThemedView";
 import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
-import IconTitleArrow from "@/components/SpecialButtons/icon-title-arrow";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TitleSwitchButton from "@/components/SpecialButtons/title-switchButton";
 
