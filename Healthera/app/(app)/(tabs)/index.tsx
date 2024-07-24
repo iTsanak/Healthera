@@ -27,7 +27,7 @@ const HomeScreen = (props: Props) => {
               <Pressable
                 className="h-16 w-full items-center justify-center bg-accent-light/70"
                 onPress={() => {
-                  router.push("");
+                  router.push("/products");
                 }}
               >
                 <ThemedText>Go to Products</ThemedText>
@@ -35,7 +35,7 @@ const HomeScreen = (props: Props) => {
               <Pressable
                 className="h-16 w-full items-center justify-center bg-accent-light/70"
                 onPress={() => {
-                  router.push("");
+                  router.push("/product-info");
                 }}
               >
                 <ThemedText>Go to Product Info</ThemedText>
