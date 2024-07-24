@@ -6,13 +6,13 @@ import IconTitleArrow from "@/components/SpecialButtons/icon-title-arrow";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import Avatar from "@/components/Profile/avatar";
+import LogoutModal from "@/components/Modal/logout";
 
 type Props = {};
 
 const ProfileScreen = (props: Props) => {
   const theme = useColorScheme() ?? "dark";
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   return (
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
@@ -73,12 +73,20 @@ const ProfileScreen = (props: Props) => {
                 icon="log-out-outline"
                 handleOnPress={() => {
                   console.log("pressed");
+                  setIsLogoutModalOpen(true);
                 }}
               />
             </View>
           </ScrollView>
         </View>
       </SafeAreaView>
+
+      <LogoutModal
+        isVisible={isLogoutModalOpen}
+        onClose={() => {
+          setIsLogoutModalOpen(false);
+        }}
+      />
     </ThemedView>
   );
 };
