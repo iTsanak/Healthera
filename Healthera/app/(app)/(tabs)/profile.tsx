@@ -65,6 +65,7 @@ const ProfileScreen = (props: Props) => {
                 icon="help-outline"
                 handleOnPress={() => {
                   console.log("pressed");
+                  router.push("/help-center");
                 }}
               />
               <IconTitleArrow
