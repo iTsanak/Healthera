@@ -15,6 +15,7 @@ import { router } from "expo-router";
 import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import CircularProgressBar from "@/components/progress-bar";
 
 type Props = {};
 
@@ -22,6 +23,8 @@ const ProductsScreen = (props: Props) => {
   const theme = useColorScheme() ?? "dark";
   const [sortOrder, setSortOrder] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
+
+  const healthScore = Math.floor(Math.random() * (100 - 0 + 1));
 
   return (
     <ThemedView className="flex-1">
@@ -105,7 +108,16 @@ const ProductsScreen = (props: Props) => {
                 style={{ backgroundColor: Colors[theme].primary }}
                 className="items-center justify-center rounded-3xl p-4 py-8"
               >
-                <View className="mb-5 h-52 w-44 bg-yellow-500"></View>
+                <View className="h-52 w-44 items-center justify-center">
+                  <CircularProgressBar
+                    percentage={healthScore}
+                    size={160}
+                    strokeWidth={10}
+                  />
+                </View>
+                <ThemedText className="mb-4 text-4xl font-bold">
+                  {healthScore}/100
+                </ThemedText>
                 <View
                   style={{ backgroundColor: Colors[theme].secondary }}
                   className="rounded-3xl p-2 px-4"
