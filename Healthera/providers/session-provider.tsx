@@ -2,7 +2,7 @@ import { createContext, useContext, useMemo, useState } from "react";
 
 type SessionContextType = {
   isLoggedIn: boolean;
-  signIn: () => void;
+  signIn: (user: any) => void;
   signOut: () => void;
   signUp: (user: any) => void;
 };
