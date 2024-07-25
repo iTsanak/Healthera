@@ -5,9 +5,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Colors } from "@/constants/Colors";
 
-type Props = {};
+type Props = {
+  title: string;
+};
 
-const SimpleTopNavBar = (props: Props) => {
+const SimpleTopNavBar = ({ title }: Props) => {
   const theme = useColorScheme() ?? "light";
 
   return (
@@ -21,9 +23,7 @@ const SimpleTopNavBar = (props: Props) => {
         <Ionicons name="chevron-back" size={30} color={Colors[theme].text} />
       </TouchableOpacity>
       <View className="absolute left-0 right-0">
-        <ThemedText className="flex-1 text-center text-2xl">
-          New Account
-        </ThemedText>
+        <ThemedText className="flex-1 text-center text-2xl">{title}</ThemedText>
       </View>
     </View>
   );
