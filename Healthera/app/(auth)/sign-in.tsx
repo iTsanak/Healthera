@@ -62,15 +62,16 @@ const SignInScreen = (props: Props) => {
         style={{ flex: 1 }}
       >
         <SafeAreaView className="flex-1">
-            <SimpleTopNavBar  title="Log in"/>
+          <SimpleTopNavBar title="Log in" />
           <View className="flex-1 px-[10%]">
-            <ThemedText className="text-left font-bold text-2xl mb-8 mt-5">Welcome</ThemedText>
+            <ThemedText className="mb-8 mt-5 text-left text-2xl font-bold">
+              Welcome
+            </ThemedText>
             <ScrollView
               showsVerticalScrollIndicator={false}
               className="flex-1"
               keyboardShouldPersistTaps="handled"
             >
-              
               <Controller
                 control={form.control}
                 name="email"
@@ -109,36 +110,57 @@ const SignInScreen = (props: Props) => {
                   />
                 )}
               />
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={() => router.replace("/forgot-password")}
-                className="self-end mt-1"
-                >
-                  <ThemedText className="text-green-500 text-sm">Forgot Password?</ThemedText>
+                className="mt-1 self-end"
+              >
+                <ThemedText className="text-sm text-green-500">
+                  Forgot Password?
+                </ThemedText>
               </TouchableOpacity>
               <View className="items-center">
                 <PrimaryButton
                   handlePress={form.handleSubmit((data: any) => onSubmit(data))}
                   title="Log in"
                   className="mb-5 mt-10 w-48"
-                  />
-                  <ThemedText className=" mb-3">or sign in with</ThemedText>
-  
-                  <View className=" mb-7   flex-row  justify-center  ">
-                    <View className="mx-2">
-                      <SocialButton iconName="google" onPress={() => {/* Handle Google sign-up */}} />
-                    </View>
-                    <View className="mx-2">
-                      <SocialButton iconName="facebook" onPress={() => {/* Handle Facebook sign-up */}} />
-                    </View>
-                    <View className="mx-2">
-                      <SocialButton iconName="fingerprint" onPress={() => {/* Handle biometric sign-up */}} />
-                    </View>
+                />
+                <ThemedText className="mb-3">or sign in with</ThemedText>
+
+                <View className="mb-7 flex-row justify-center">
+                  <View className="mx-2">
+                    <SocialButton
+                      iconName="google"
+                      onPress={() => {
+                        /* Handle Google sign-up */
+                      }}
+                    />
                   </View>
-                  <View className="flex-row items-center">
-                    <ThemedText className="mx-2">Don't have an account?</ThemedText>
-                    <TouchableOpacity onPress={() => router.replace("/sign-up")}>
-                      <ThemedText className="font-bold text-green-600">Sign Up</ThemedText>
-                    </TouchableOpacity>
+                  <View className="mx-2">
+                    <SocialButton
+                      iconName="facebook"
+                      onPress={() => {
+                        /* Handle Facebook sign-up */
+                      }}
+                    />
+                  </View>
+                  <View className="mx-2">
+                    <SocialButton
+                      iconName="fingerprint"
+                      onPress={() => {
+                        /* Handle biometric sign-up */
+                      }}
+                    />
+                  </View>
+                </View>
+                <View className="flex-row items-center">
+                  <ThemedText className="mx-2">
+                    Don't have an account?
+                  </ThemedText>
+                  <TouchableOpacity onPress={() => router.replace("/sign-up")}>
+                    <ThemedText className="font-bold text-green-600">
+                      Sign Up
+                    </ThemedText>
+                  </TouchableOpacity>
                 </View>
               </View>
             </ScrollView>

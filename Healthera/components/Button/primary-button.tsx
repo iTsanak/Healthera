@@ -28,7 +28,7 @@ const PrimaryButton = ({
     >
       <TouchableOpacity
         onPress={handlePress}
-        className={`flex-1 items-center justify-center bg-primary-light dark:bg-primary-dark ${isLoading ? "opacity-50" : ""}`}
+        className={`flex-1 items-center justify-center bg-accent-light dark:bg-accent-dark ${isLoading ? "opacity-50" : ""}`}
         disabled={isLoading}
       >
         <ThemedText

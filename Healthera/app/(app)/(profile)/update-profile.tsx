@@ -1,7 +1,5 @@
 import {
   View,
-  Text,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -9,43 +7,33 @@ import {
 } from "react-native";
 import React from "react";
 import { ThemedView } from "@/components/ThemedView";
-import { ThemedText } from "@/components/ThemedText";
-import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
 import FormTextField from "@/components/Auth/form-text-field";
 import PrimaryButton from "@/components/Button/primary-button";
-import { useSession } from "@/providers/session-provider";
 import * as z from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
+import Avatar from "@/components/Profile/avatar";
 
 type Props = {};
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  password: z
-    .string()
-    .min(1, "Password is required")
-    .min(8, "Password too short"),
   email: z.string().min(1, "Email is required").email("Invalid Email format"),
   phoneNumber: z.string().min(1, "Phone number is required"),
   dob: z.string().min(1, "Date of Birth is required"),
 });
 
-const SignUpScreen = (props: Props) => {
+const ProfileScreen = (props: Props) => {
   const theme = useColorScheme() ?? "dark";
-  const { signUp } = useSession();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      password: "",
-      email: "",
       phoneNumber: "",
+      email: "",
       dob: "",
     },
   });
@@ -54,11 +42,8 @@ const SignUpScreen = (props: Props) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      console.log("SUBMITTING SIGN UP FORM", values);
+      console.log("SUBMITTING UPDATE PROFILE FORM", values);
       form.reset();
-      signUp(values);
-      router.dismissAll();
-      router.replace("/");
     } catch (error) {
       console.log(error);
     }
@@ -72,13 +57,18 @@ const SignUpScreen = (props: Props) => {
       >
         <SafeAreaView className="flex-1">
           <View className="flex-1 items-center">
-            <SimpleTopNavBar title="New Account" />
+            <SimpleTopNavBar title="Profile" />
             <ScrollView
               showsVerticalScrollIndicator={false}
               className="w-full"
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={{ alignItems: "center" }}
             >
+              <Avatar
+                imageUri="https://utfs.io/f/e96b95ab-b00a-4801-bcc7-4946f71c11f2-cnxr61.jpeg"
+                showBadge={true}
+                size={128}
+              />
               <View className="w-[80%]">
                 <Controller
                   control={form.control}
@@ -95,25 +85,6 @@ const SignUpScreen = (props: Props) => {
                       value={value}
                       className="mt-2"
                       error={error}
-                    />
-                  )}
-                />
-                <Controller
-                  control={form.control}
-                  name="password"
-                  disabled={isLoading}
-                  render={({
-                    field: { value, onChange, onBlur },
-                    fieldState: { error },
-                  }) => (
-                    <FormTextField
-                      title="Password"
-                      placeholder="*****"
-                      handleTextChange={onChange}
-                      value={value}
-                      className="mt-4"
-                      error={error}
-                      isSecureText={true}
                     />
                   )}
                 />
@@ -175,96 +146,14 @@ const SignUpScreen = (props: Props) => {
                   )}
                 />
 
-                <View className="mt-4 items-center">
-                  <ThemedText className="text-xs">
-                    By continuing you agree to
-                  </ThemedText>
-                  <ThemedText className="text-xs">
-                    <ThemedText
-                      className="text-xs text-secondary-light dark:text-secondary-dark"
-                      onPress={() => {
-                        console.log("pressed");
-                      }}
-                    >
-                      Terms of Use
-                    </ThemedText>{" "}
-                    and{" "}
-                    <ThemedText
-                      className="text-xs text-secondary-light dark:text-secondary-dark"
-                      onPress={() => {
-                        console.log("pressed");
-                      }}
-                    >
-                      Privacy Policy
-                    </ThemedText>
-                  </ThemedText>
-
+                <View className="mb-10 mt-4 items-center">
                   <PrimaryButton
                     handlePress={form.handleSubmit((data: any) =>
                       onSubmit(data),
                     )}
-                    title="Sign Up"
+                    title="Update Profile"
                     className="my-4 w-48"
                   />
-
-                  <ThemedText>or sign up with</ThemedText>
-
-                  <View className="mt-2 flex-row gap-x-2">
-                    <View className="overflow-hidden rounded-full">
-                      <TouchableOpacity
-                        className="bg-secondary-light p-2 dark:bg-secondary-dark"
-                        onPress={() => {
-                          console.log("Pressed");
-                        }}
-                      >
-                        <Ionicons
-                          name="logo-google"
-                          size={30}
-                          color={Colors[theme].background}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    <View className="overflow-hidden rounded-full">
-                      <TouchableOpacity
-                        className="bg-secondary-light p-2 dark:bg-secondary-dark"
-                        onPress={() => {
-                          console.log("Pressed");
-                        }}
-                      >
-                        <Ionicons
-                          name="logo-facebook"
-                          size={30}
-                          color={Colors[theme].background}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    <View className="overflow-hidden rounded-full">
-                      <TouchableOpacity
-                        className="bg-secondary-light p-2 dark:bg-secondary-dark"
-                        onPress={() => {
-                          console.log("Pressed");
-                        }}
-                      >
-                        <Ionicons
-                          name="finger-print"
-                          size={30}
-                          color={Colors[theme].background}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-
-                  <ThemedText className="mb-10 mt-4">
-                    already have an account?{" "}
-                    <ThemedText
-                      className="text-secondary-light dark:text-secondary-dark"
-                      onPress={() => {
-                        console.log("pressed");
-                      }}
-                    >
-                      Log in
-                    </ThemedText>
-                  </ThemedText>
                 </View>
               </View>
             </ScrollView>
@@ -275,4 +164,4 @@ const SignUpScreen = (props: Props) => {
   );
 };
 
-export default SignUpScreen;
+export default ProfileScreen;
