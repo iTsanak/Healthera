@@ -1,10 +1,10 @@
 # REQUEST EXAMPLE
-POST http://192.168.27.206:8000/api/v1/auth/register/
+POST http://localhost:8000/api/v1/auth/register/
 Content-Type: application/json
 
 {
 "username": "test1",
-"email": "test@test.com",
+"email": "test4@test.com",
 "password1": "Pass123!@#",
 "password2": "Pass123!@#",
 "device_id": "UniqueID123",

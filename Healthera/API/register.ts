@@ -6,6 +6,8 @@ export type RegisterRequestData =
       password1: string;
       password2: string;
       device_id: string;
+      dob?: string;
+      phone_number?: string;
     }
   | {
       email: string;
@@ -13,6 +15,8 @@ export type RegisterRequestData =
       password1: string;
       password2: string;
       device_id: string;
+      dob?: string;
+      phone_number?: string;
     };
 
 export type RegisterResponseData = {

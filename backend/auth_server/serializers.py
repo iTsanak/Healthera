@@ -58,8 +58,8 @@ class CustomLoginSerializer(LoginSerializer):
 
 class CustomRegisterSerializer(RegisterSerializer):
     device_id = serializers.CharField(required=True)
-    phone_number = serializers.CharField(required=True)
-    dob = serializers.DateField(required=True)
+    phone_number = serializers.CharField(required=False)
+    dob = serializers.DateField(required=False)
 
     def save(self, request):
         user = super().save(request)
