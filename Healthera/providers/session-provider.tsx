@@ -90,9 +90,14 @@ export function SessionProvider({
 
   const logout = async () => {
     setUser(null);
-    await setAccessToken("");
-    await setRefreshToken("");
-    await AsyncStorage.removeItem("STORED_USER");
+    await Promise.all([
+      setAccessToken(""),
+      setRefreshToken(""),
+      AsyncStorage.removeItem("STORED_USER"),
+    ]);
+
+    // Adding a small delay to ensure state updates have propagated
+    return new Promise((resolve) => setTimeout(resolve, 100));
   };
 
   const resetPassword = async () => {
