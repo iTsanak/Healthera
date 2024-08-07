@@ -1,0 +1,25 @@
+# REQUEST EXAMPLE
+GET http://localhost:8000/api/v1/auth/check-email/
+Content-Type: application/json
+
+{
+"email": "test@test.com"
+}
+
+# OBSERVATIONS:
+# This function has a API limit defined
+# it will start to fail after reaching the threshold
+
+# POSSIBLE RESPONSE EXAMPLE:
+
+## IN USE
+# {
+#     "message": "Email is already in use.",
+#     "code": "IN_USE"
+# }
+
+## AVAILABLE
+# {
+#     "message": "Email is available.",
+#     "code": "AVAILABLE"
+# }
