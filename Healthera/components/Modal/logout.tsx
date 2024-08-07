@@ -27,7 +27,7 @@ export default function LogoutModal({
   onClose: () => void;
 }>) {
   const theme = useColorScheme() ?? "light";
-  const { signOut } = useSession();
+  const { logout } = useSession();
   return (
     <Modal
       animationType="slide"
@@ -66,8 +66,8 @@ export default function LogoutModal({
               <PrimaryButton
                 className="w-36"
                 title="Yes, Logout"
-                handlePress={() => {
-                  signOut();
+                handlePress={async () => {
+                  await logout();
                   router.replace("/");
                 }}
               />
