@@ -88,7 +88,7 @@ export function SessionProvider({
     await storeUser(newUser);
   };
 
-  const logout = async () => {
+  const logout: () => Promise<void> = async () => {
     setUser(null);
     await Promise.all([
       setAccessToken(""),
