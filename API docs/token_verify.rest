@@ -1,0 +1,15 @@
+# REQUEST EXAMPLE
+POST http://localhost:8000/api/v1/auth/default/token/verify/
+Content-Type: application/json
+
+{
+    "token": "e1yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIzMDYwMjk0LCJpYXQiOjE3MjMwNTgzNTQsImp0aSI6ImE1YmMxZDc1YTMxMzQ5MmY5ZjM3ZjUzNGQ5OWNmZjIyIiwidXNlcl9pZCI6Ijk3MzcxNjBhLThhZmMtNGY2MC1hM2E4LWFiZTA2MTYxMzE5NiIsInVzZXIiOnsiaWQiOiI5NzM3MTYwYS04YWZjLTRmNjAtYTNhOC1hYmUwNjE2MTMxOTYiLCJ1c2VybmFtZSI6InRlc3QxIiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwicHJvZmlsZV9pbWFnZV91cmwiOiIiLCJkb2IiOiIxOTkwLTAxLTAxIiwicGhvbmVfbnVtYmVyIjoiKzEyMzQ1Njc4OSIsImRldmljZV9pZCI6IlNhbWVBc1JlZ2lzdGVyT3JOZXdPbmUiLCJmaXJzdF9uYW1lIjoiIiwibGFzdF9uYW1lIjoiIiwiaXNfc3RhZmYiOmZhbHNlfX0.7w2RzqS4NLXuTL27GcouLrrNTdJkuf2lSCjJNDqif-c"
+}
+
+# OBSERVATIONS:
+# Verify if access token is still valid
+
+# RESPONSE EXAMPLE:
+
+# 401 if not valid
+# 200 if valid

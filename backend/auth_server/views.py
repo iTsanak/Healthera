@@ -33,8 +33,10 @@ class GoogleLogin(SocialLoginView):
 
 
 class CustomLoginView(LoginView):
-    def get_serializer_class(self):
-        return CustomLoginSerializer
+    serializer_class = CustomLoginSerializer
+
+    # def get_serializer_class(self):
+    #     return CustomLoginSerializer
 
     def login(self):
         self.user = self.serializer.validated_data['user']
