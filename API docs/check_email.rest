@@ -3,7 +3,7 @@ POST http://localhost:8000/api/v1/user/check-email/
 Content-Type: application/json
 
 {
-"email": "test@test.com"
+"email": "test1@test.com"
 }
 
 # OBSERVATIONS:
