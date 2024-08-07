@@ -23,7 +23,7 @@ import {
 export type SessionUser = {
   id: string;
   email: string;
-  username?: string;
+  username: string;
   first_name: string;
   last_name: string;
   imageURL?: string;

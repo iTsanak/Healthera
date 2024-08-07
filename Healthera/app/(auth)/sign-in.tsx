@@ -6,7 +6,7 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { router } from "expo-router";
@@ -19,6 +19,8 @@ import * as z from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SocialButton from "@/components/Button/social-sign-in-buttons";
+import { LOGIN_URL, LoginRequestData, LoginResponseData } from "@/API/login";
+import axios from "axios";
 
 type Props = {};
 
@@ -31,7 +33,8 @@ const formSchema = z.object({
 });
 
 const SignInScreen = (props: Props) => {
-  const { signIn } = useSession();
+  const { login, getDeviceId } = useSession();
+  const [loginErrorMessage, setLoginErrorMessage] = useState("");
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -45,13 +48,33 @@ const SignInScreen = (props: Props) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      console.log("SUBMITTING SIGN IN FORM", values);
+      console.log("[SIGN_IN_SCREEN]: SUBMITTING SIGN IN FORM", values);
+      setLoginErrorMessage("");
+
+      const device_id = await getDeviceId();
+
+      const requestData: LoginRequestData = {
+        password: values.password,
+        email: values.email,
+        device_id: device_id,
+      };
+
+      const response: LoginResponseData = (
+        await axios.post(LOGIN_URL, requestData)
+      ).data;
+
+      await login(response);
+
       form.reset();
-      signIn(values);
-      router.dismissAll();
+      if (router.canGoBack()) {
+        router.dismissAll();
+      }
       router.replace("/");
     } catch (error) {
-      console.log(error);
+      setLoginErrorMessage(
+        "Password, email or combination are invalid. Please try again.",
+      );
+      console.log("[SIGN_IN_SCREEN]:", error);
     }
   };
 
@@ -72,6 +95,14 @@ const SignInScreen = (props: Props) => {
               className="flex-1"
               keyboardShouldPersistTaps="handled"
             >
+              {!!loginErrorMessage && (
+                <View className="py-4">
+                  <ThemedText className="text-center text-red-500">
+                    {loginErrorMessage}
+                  </ThemedText>
+                </View>
+              )}
+
               <Controller
                 control={form.control}
                 name="email"
