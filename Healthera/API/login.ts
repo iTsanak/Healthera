@@ -1,18 +1,11 @@
 import qs from "query-string";
 
-export type LoginRequestData =
-  | {
-      email?: string;
-      username: string;
-      password: string;
-      device_id: string;
-    }
-  | {
-      email: string;
-      username?: string;
-      password: string;
-      device_id: string;
-    };
+export type LoginRequestData = {
+  email: string;
+  username?: string;
+  password: string;
+  device_id: string;
+};
 
 export type LoginResponseData = {
   access: string;

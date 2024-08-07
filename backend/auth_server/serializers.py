@@ -64,7 +64,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     def save(self, request):
         user = super().save(request)
         user.device_id = self.validated_data['device_id']
-        user.phone_number = self.validated_data['phone_number']
-        user.dob = self.validated_data['dob']
+        user.phone_number = self.validated_data.get('phone_number', '')
+        user.dob = self.validated_data.get('dob', None)
         user.save()
         return user

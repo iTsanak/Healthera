@@ -7,7 +7,7 @@ import {
   ScrollView,
   useColorScheme,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { router } from "expo-router";
@@ -21,8 +21,29 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import { parse, isValid, format } from "date-fns";
+import {
+  CHECK_EMAIL_URL,
+  CheckEmailRequestData,
+  CheckEmailResponseData,
+} from "@/API/check-email";
+import axios from "axios";
+import {
+  REGISTER_URL,
+  RegisterRequestData,
+  RegisterResponseData,
+} from "@/API/register";
 
 type Props = {};
+
+// Regex for phone number validation
+const phoneRegex = /^\+?1?\d{9,15}$/;
+
+// Date format validation function
+const dateValidator = (value: string) => {
+  const date = new Date(value);
+  return !isNaN(date.getTime());
+};
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -31,13 +52,30 @@ const formSchema = z.object({
     .min(1, "Password is required")
     .min(8, "Password too short"),
   email: z.string().min(1, "Email is required").email("Invalid Email format"),
-  phoneNumber: z.string().min(1, "Phone number is required"),
-  dob: z.string().min(1, "Date of Birth is required"),
+  // phoneNumber: z
+  //   .string()
+  //   .min(1, "Phone number is required")
+  //   .regex(
+  //     phoneRegex,
+  //     "Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.",
+  //   ),
+  // dob: z
+  //   .string()
+  //   .min(1, "Date of Birth is required")
+  //   .refine((value) => {
+  //     const parsedDate = parse(value, "yyyy-MM-dd", new Date());
+  //     return isValid(parsedDate);
+  //   }, "Invalid date format. Use yyyy-MM-dd")
+  //   .transform((value) => {
+  //     const parsedDate = parse(value, "yyyy-MM-dd", new Date());
+  //     return format(parsedDate, "yyyy-MM-dd");
+  //   }),
 });
 
 const SignUpScreen = (props: Props) => {
   const theme = useColorScheme() ?? "dark";
-  const { signUp } = useSession();
+  const { register, getDeviceId } = useSession();
+  const [registerErrorMessage, setRegisterErrorMessage] = useState("");
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -45,22 +83,66 @@ const SignUpScreen = (props: Props) => {
       name: "",
       password: "",
       email: "",
-      phoneNumber: "",
-      dob: "",
+      // phoneNumber: "",
+      // dob: "",
     },
   });
 
   const isLoading = form.formState.isSubmitting;
 
+  const checkIfEmailIsAvailable = async (email: string) => {
+    const requestData: CheckEmailRequestData = {
+      email: email,
+    };
+
+    const response: CheckEmailResponseData = (
+      await axios.post(CHECK_EMAIL_URL, requestData)
+    ).data;
+
+    if (response.code !== "AVAILABLE" && response.code !== "IN_USE") {
+      console.log(
+        "[SIGN_UP_SCREEN]: CHECK EMAIL ERROR, response.code is invalid",
+      );
+    }
+
+    return response.code === "AVAILABLE";
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // TODO phone number format and date format are not easy for users
+    values.email = values.email.toLowerCase().trim();
     try {
-      console.log("SUBMITTING SIGN UP FORM", values);
+      console.log("[SIGN_UP_SCREEN]: SUBMITTING SIGN UP FORM", values);
+      setRegisterErrorMessage("");
+
+      if (!(await checkIfEmailIsAvailable(values.email))) {
+        setRegisterErrorMessage("Email already registered");
+        return;
+      }
+
+      const device_id = await getDeviceId();
+
+      const requestData: RegisterRequestData = {
+        email: values.email,
+        password1: values.password,
+        password2: values.password,
+        device_id: device_id,
+      };
+
+      const response: RegisterResponseData = (
+        await axios.post(REGISTER_URL, requestData)
+      ).data;
+
+      await register(response);
+
       form.reset();
-      signUp(values);
-      router.dismissAll();
+      if (router.canGoBack()) {
+        router.dismissAll();
+      }
       router.replace("/");
     } catch (error) {
-      console.log(error);
+      setRegisterErrorMessage("Username is already taken.");
+      console.log("[SIGN_UP_SCREEN]:", error);
     }
   };
 
@@ -80,6 +162,14 @@ const SignUpScreen = (props: Props) => {
               contentContainerStyle={{ alignItems: "center" }}
             >
               <View className="w-[80%]">
+                {!!registerErrorMessage && (
+                  <View className="py-4">
+                    <ThemedText className="text-center text-red-500">
+                      {registerErrorMessage}
+                    </ThemedText>
+                  </View>
+                )}
+
                 <Controller
                   control={form.control}
                   name="name"
@@ -136,7 +226,7 @@ const SignUpScreen = (props: Props) => {
                     />
                   )}
                 />
-                <Controller
+                {/* <Controller
                   control={form.control}
                   name="phoneNumber"
                   disabled={isLoading}
@@ -146,7 +236,7 @@ const SignUpScreen = (props: Props) => {
                   }) => (
                     <FormTextField
                       title="Mobile Number"
-                      placeholder="123-123-1234"
+                      placeholder="+1 123 123 1234"
                       handleTextChange={onChange}
                       value={value}
                       className="mt-4"
@@ -170,10 +260,9 @@ const SignUpScreen = (props: Props) => {
                       value={value}
                       className="mt-4"
                       error={error}
-                      keyboardType="number-pad"
                     />
                   )}
-                />
+                /> */}
 
                 <View className="mt-4 items-center">
                   <ThemedText className="text-xs">

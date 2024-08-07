@@ -58,6 +58,7 @@ export function SessionProvider({
 
   const register = async (data: RegisterResponseData) => {
     // TODO profile image missing
+    // WARNING this function does not updated the backend database
     const newUser: SessionUser = {
       id: data.user.pk,
       email: data.user.email,
@@ -73,6 +74,7 @@ export function SessionProvider({
 
   const login = async (data: LoginResponseData) => {
     // TODO profile image missing
+    // WARNING this function does not updated the backend database
     const newUser: SessionUser = {
       id: data.user.pk,
       email: data.user.email,
@@ -285,7 +287,7 @@ export function SessionProvider({
 
   const getDeviceId = async () => {
     // TODO: this should use SecureStore
-    let deviceId = await AsyncStorage.getItem("device_id");
+    let deviceId = await AsyncStorage.getItem("DEVICE_ID");
     if (!deviceId) {
       if (Platform.OS === "ios") {
         deviceId = await Application.getIosIdForVendorAsync();
@@ -295,7 +297,7 @@ export function SessionProvider({
       if (!deviceId) {
         throw new Error("[SESSION_PROVIDER]: failed to retrieve deviceId");
       }
-      await AsyncStorage.setItem("device_id", deviceId);
+      await AsyncStorage.setItem("DEVICE_ID", deviceId);
     }
     return deviceId;
   };
