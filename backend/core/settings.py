@@ -1,12 +1,11 @@
 import os
 from pathlib import Path
 from datetime import timedelta
-import urllib.parse as urlparse
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'default-secret-key')
-DEBUG = os.getenv('DEBUG', 'true').lower() in ['true', '1', 'yes']
+DEBUG = os.getenv('DEBUG', 'True').lower() in ['true', '1', 'yes']
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 CSRF_TRUSTED_ORIGINS = os.getenv(
@@ -87,23 +86,23 @@ TEMPLATES = [
 WSGI_APPLICATION = "core.wsgi.application"
 
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('POSTGRES_DB', 'my_django'),
-#         'USER': os.getenv('POSTGRES_USER', 'postgresuser'),
-#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgrespassword'),
-#         'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
-#         'PORT': os.getenv('POSTGRES_PORT', '5600'),
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'my_django'),
+        'USER': os.getenv('POSTGRES_USER', 'postgresuser'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgrespassword'),
+        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+        'PORT': os.getenv('POSTGRES_PORT', '5600'),
+    }
+}
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -208,8 +207,8 @@ LOGOUT_REDIRECT_URL = "/"
 CORS_ALLOW_ALL_ORIGINS = os.getenv(
     'CORS_ALLOW_ALL_ORIGINS', 'False').lower() in ['true', '1', 'yes']
 
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = os.getenv('ACCOUNT_EMAIL_VERIFICATION', 'none')

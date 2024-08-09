@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
 "username": "test1",
-"email": "test@test.com",
+"email": "test1@test.com",
 "password1": "Pass123!@#",
 "password2": "Pass123!@#",
 "device_id": "UniqueID123",
@@ -18,6 +18,11 @@ Content-Type: application/json
 #   min: +123456789 (9 numbers)
 #   max: (15 numbers)
 # dob: yyyy-mm-ddd
+#
+# username with the current backend core.settings cofiguration can be ommited
+# it can be easily changed by setting `ACCOUNT_USERNAME_REQUIRED` to true
+#
+# username will be created automatically and randomly by using the email name
 
 # RESPONSE EXAMPLE:
 

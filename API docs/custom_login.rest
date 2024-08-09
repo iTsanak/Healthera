@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
 "username": "test1",
-"email": "test@test.com",
+"email": "test1@test.com",
 "password": "Pass123!@#",
 "device_id": "SameAsRegisterOrNewOne"
 }
