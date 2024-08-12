@@ -68,7 +68,7 @@ const ProductsScreen = (props: Props) => {
       } as any);
 
       try {
-        const response = await fetch('yoururl.ngrok-free.app/upload/', {
+        const response = await fetch('yournewurl.ngrok-free.app/upload/', {
           method: 'POST',
           body: formData,
           headers: {
