@@ -26,6 +26,7 @@ export function SessionProvider({
   const signOut = () => setIsLoggedIn(false);
   const signUp = (user: any) => {
     console.log("Account created", user);
+    setIsLoggedIn(true);
   };
 
   const contextMemo = useMemo(
