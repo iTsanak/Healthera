@@ -8,6 +8,6 @@ urlpatterns = [
     path("", include("auth_server.urls")),
     path("", include("users.urls")),
     path("", health_check),
-    path('upload/', include('gemini.urls')),
+    path("", include('gemini.urls')),
 
 ]

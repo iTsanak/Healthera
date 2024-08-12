@@ -48,6 +48,9 @@ ENV CORS_ALLOW_ALL_ORIGINS=${CORS_ALLOW_ALL_ORIGINS}
 ENV ACCOUNT_EMAIL_VERIFICATION=${ACCOUNT_EMAIL_VERIFICATION}
 ENV EMAIL_BACKEND=${EMAIL_BACKEND}
 
+# Gemini
+ENV GEMINI_API_KEY=${GEMINI_API_KEY}
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
     curl \

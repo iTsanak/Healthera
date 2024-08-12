@@ -16,6 +16,7 @@ import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import CircularProgressBar from "@/components/progress-bar";
+import { useAnalysis } from "@/providers/analysis-provider";
 
 type Props = {};
 
@@ -24,7 +25,10 @@ const ProductsScreen = (props: Props) => {
   const [sortOrder, setSortOrder] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const healthScore = Math.floor(Math.random() * (100 - 0 + 1));
+  const { result } = useAnalysis();
+
+  // const healthScore = Math.floor(Math.random() * (100 - 0 + 1));
+  const healthScore = result?.overall_score ?? 0;
 
   return (
     <ThemedView className="flex-1">
@@ -123,26 +127,24 @@ const ProductsScreen = (props: Props) => {
                   className="rounded-3xl p-2 px-4"
                 >
                   <ThemedText style={{ color: Colors[theme].background }}>
-                    This product is healthy enough
+                    {result?.additional_notes || "Analysis complete"}
                   </ThemedText>
                 </View>
               </View>
 
-              <View className="mt-10">
-                <ThemedText style={{ color: Colors[theme].accent }}>
-                  Ingredient 1
-                </ThemedText>
-                <ThemedText className="text-sm">
-                  Lorem ipsum odor amet, consectetuer adipiscing elit. Aptent ut
-                  ridiculus magna lacinia convallis egestas. Magna libero
-                  conubia duis vitae maximus imperdiet senectus. Praesent semper
-                  platea porta aenean nam. Suscipit molestie condimentum rhoncus
-                  parturient elit nec magnis sollicitudin. Proin id aliquet
-                  augue pretium libero amet phasellus maecenas! Euismod purus
-                  platea natoque augue interdum duis diam sit. Porttitor sapien
-                  sem fusce quam natoque lacus quam nostra.
-                </ThemedText>
-              </View>
+              {result?.ingredients &&
+                Object.entries(result.ingredients).map(
+                  ([name, info], index) => (
+                    <View key={index} className="mt-10">
+                      <ThemedText style={{ color: Colors[theme].accent }}>
+                        {name} (Score: {info.score})
+                      </ThemedText>
+                      <ThemedText className="text-sm">
+                        {info["notes/description"]}
+                      </ThemedText>
+                    </View>
+                  ),
+                )}
             </View>
           </ScrollView>
         </View>

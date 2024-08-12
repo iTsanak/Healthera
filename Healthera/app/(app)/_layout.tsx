@@ -1,4 +1,5 @@
 import SplashScreenL from "@/components/LoadingScreens/SplashScreen";
+import { AnalysisProvider } from "@/providers/analysis-provider";
 import { useSession } from "@/providers/session-provider";
 import { Redirect, Stack } from "expo-router";
 import { useEffect, useState } from "react";
@@ -27,11 +28,13 @@ export default function AppLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="(profile)" options={{ headerShown: false }} />
-      <Stack.Screen name="(settings)" options={{ headerShown: false }} />
-      <Stack.Screen name="(products)" options={{ headerShown: false }} />
-    </Stack>
+    <AnalysisProvider>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(profile)" options={{ headerShown: false }} />
+        <Stack.Screen name="(settings)" options={{ headerShown: false }} />
+        <Stack.Screen name="(products)" options={{ headerShown: false }} />
+      </Stack>
+    </AnalysisProvider>
   );
 }

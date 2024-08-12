@@ -52,6 +52,8 @@ services:
       - CORS_ALLOW_ALL_ORIGINS=${CORS_ALLOW_ALL_ORIGINS:-True}
       - ACCOUNT_EMAIL_VERIFICATION=${ACCOUNT_EMAIL_VERIFICATION:-none}
       - EMAIL_BACKEND=${EMAIL_BACKEND:-django.core.mail.backends.console.EmailBackend}
+
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-SomeKey}
     networks:
       - app-network
 
