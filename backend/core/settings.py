@@ -23,6 +23,7 @@ AUTH_USER_MODEL = 'users.User'
 INSTALLED_APPS = [
     'users',
     'daphne',
+    'gemini',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -205,7 +206,7 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 CORS_ALLOW_ALL_ORIGINS = os.getenv(
-    'CORS_ALLOW_ALL_ORIGINS', 'False').lower() in ['true', '1', 'yes']
+    'CORS_ALLOW_ALL_ORIGINS', 'True').lower() in ['true', '1', 'yes']
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USERNAME_REQUIRED = False

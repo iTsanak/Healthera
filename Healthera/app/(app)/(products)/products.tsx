@@ -1,20 +1,19 @@
+import React, { useState } from "react";
 import {
   View,
   ScrollView,
   useColorScheme,
-  Pressable,
   TouchableOpacity,
+  Image,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { SafeAreaView } from "react-native-safe-area-context";
-import LogoutModal from "@/components/Modal/logout";
-import AvatarTopNavBar from "@/components/Navigation/avatar-top-navbar";
 import { ThemedText } from "@/components/ThemedText";
-import { router } from "expo-router";
 import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import * as ImagePicker from 'expo-image-picker';
 
 type Props = {};
 
@@ -22,6 +21,87 @@ const ProductsScreen = (props: Props) => {
   const theme = useColorScheme() ?? "dark";
   const [sortOrder, setSortOrder] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const requestPermissions = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Sorry, we need camera permissions to make this work!');
+    }
+
+    const { status: libraryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (libraryStatus !== 'granted') {
+      alert('Sorry, we need photo library permissions to make this work!');
+    }
+  };
+
+  React.useEffect(() => {
+    requestPermissions();
+  }, []);
+
+  const uploadImage = async (fromCamera: boolean) => {
+    let result;
+    if (fromCamera) {
+      result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+    } else {
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+    }
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+      // Send the image to the backend
+      const formData = new FormData();
+      formData.append('image', {
+        uri: result.assets[0].uri,
+        name: 'image.jpg',
+        type: 'image/jpeg',
+      } as any);
+
+      try {
+        const response = await fetch('yournewurl.ngrok-free.app/upload/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        if (!response.ok) {
+          
+          throw new Error(`HTTP error! status: ${response.status}, ${response.statusText}`);
+        }
+      
+      
+
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
+    }
+  };
+
+  const showImagePickerOptions = () => {
+    Alert.alert(
+      'Upload Image',
+      'Choose an option',
+      [
+        { text: 'Camera', onPress: () => uploadImage(true) },
+        { text: 'Gallery', onPress: () => uploadImage(false) },
+        { text: 'Cancel', style: 'cancel' }
+      ]
+    );
+  };
 
   return (
     <ThemedView className="flex-1">
@@ -112,12 +192,19 @@ const ProductsScreen = (props: Props) => {
                 <TouchableOpacity
                   style={{ backgroundColor: Colors[theme].secondary }}
                   className="rounded-3xl p-2 px-4"
+                  onPress={showImagePickerOptions}
                 >
                   <ThemedText style={{ color: Colors[theme].background }}>
                     Upload
                   </ThemedText>
                 </TouchableOpacity>
               </View>
+              {selectedImage && (
+                <Image
+                  source={{ uri: selectedImage }}
+                  style={{ width: 200, height: 200, marginTop: 20, borderRadius: 10, marginBottom: 20, alignSelf: 'center' }}
+                />
+              )}
             </View>
           </ScrollView>
         </View>
@@ -125,4 +212,5 @@ const ProductsScreen = (props: Props) => {
     </ThemedView>
   );
 };
+
 export default ProductsScreen;
