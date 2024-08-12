@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path, include, include
+from django.urls import path, include
 from .views import health_check
 from gemini import views
 
