@@ -22,6 +22,6 @@ def upload_image(request):
     
     # Process the image with Gemini API
     ai = HealtheraAI()
-    response_text = ai.analyze_image(file_name)
+    response_text = ai.analyze_image(file_path)
 
-    return JsonResponse({'analysis': response_text})
+    return JsonResponse({'Analysis': response_text})

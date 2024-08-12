@@ -36,19 +36,11 @@ class HealtheraAI:
         )
 
     def analyze_image(self, image_path):
+        myfile = genai.upload_file(image_path)
+        
+        #If chat_session is None, start a new chat session else continue from same? TO FIX?#####################
         chat_session = self.model.start_chat(history=[])
-        with open(image_path, 'rb') as image_file:
-            response = chat_session.send_message(image_file.read())
+        response = chat_session.send_message(myfile)
+        # response = self.model.generate_content([myfile, "Give me the health score of this product."]) Both tjis and above line works
+        print(f"{response.text=}")
         return response.text
-
-
-    # def analyze_image(self, image_path):
-    #     myfile = genai.upload_file(image_path)
-    #     print(f"{myfile=}")
-    #     model = genai.GenerativeModel(model_name="gemini-1.5-flash")
-    #     response = model.generate_content([myfile, "Describe how this product might be manufactured."])
-    #     # chat_session = self.model.start_chat(history=[])
-    #     # with open(image_path, 'rb') as image_file:
-    #     #     response = chat_session.send_message(image_file.read())
-    #     print(f"{response.text=}")
-    #     return response.text
