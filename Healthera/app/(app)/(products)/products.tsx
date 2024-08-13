@@ -13,7 +13,9 @@ import { ThemedText } from "@/components/ThemedText";
 import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
+import { UPLOAD_URL } from "@/API/upload";
+import { useAnalysis } from "@/providers/analysis-provider";
 
 type Props = {};
 
@@ -23,15 +25,18 @@ const ProductsScreen = (props: Props) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  const { setUuid } = useAnalysis();
+
   const requestPermissions = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Sorry, we need camera permissions to make this work!');
+    if (status !== "granted") {
+      alert("Sorry, we need camera permissions to make this work!");
     }
 
-    const { status: libraryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (libraryStatus !== 'granted') {
-      alert('Sorry, we need photo library permissions to make this work!');
+    const { status: libraryStatus } =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (libraryStatus !== "granted") {
+      alert("Sorry, we need photo library permissions to make this work!");
     }
   };
 
@@ -61,46 +66,42 @@ const ProductsScreen = (props: Props) => {
       setSelectedImage(result.assets[0].uri);
       // Send the image to the backend
       const formData = new FormData();
-      formData.append('image', {
+      formData.append("image", {
         uri: result.assets[0].uri,
-        name: 'image.jpg',
-        type: 'image/jpeg',
+        name: "image.jpg",
+        type: "image/jpeg",
       } as any);
 
       try {
-        const response = await fetch('yournewurl.ngrok-free.app/upload/', {
-          method: 'POST',
+        const response = await fetch(UPLOAD_URL, {
+          method: "POST",
           body: formData,
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         });
 
         if (!response.ok) {
-          
-          throw new Error(`HTTP error! status: ${response.status}, ${response.statusText}`);
+          throw new Error(
+            `HTTP error! status: ${response.status}, ${response.statusText}`,
+          );
         }
-      
-      
 
         const data = await response.json();
         console.log(data);
+        setUuid(data.uuid); // This will trigger the polling
       } catch (error) {
-        console.error('Error uploading image:', error);
+        console.error("Error uploading image:", error);
       }
     }
   };
 
   const showImagePickerOptions = () => {
-    Alert.alert(
-      'Upload Image',
-      'Choose an option',
-      [
-        { text: 'Camera', onPress: () => uploadImage(true) },
-        { text: 'Gallery', onPress: () => uploadImage(false) },
-        { text: 'Cancel', style: 'cancel' }
-      ]
-    );
+    Alert.alert("Upload Image", "Choose an option", [
+      { text: "Camera", onPress: () => uploadImage(true) },
+      { text: "Gallery", onPress: () => uploadImage(false) },
+      { text: "Cancel", style: "cancel" },
+    ]);
   };
 
   return (
@@ -202,7 +203,14 @@ const ProductsScreen = (props: Props) => {
               {selectedImage && (
                 <Image
                   source={{ uri: selectedImage }}
-                  style={{ width: 200, height: 200, marginTop: 20, borderRadius: 10, marginBottom: 20, alignSelf: 'center' }}
+                  style={{
+                    width: 200,
+                    height: 200,
+                    marginTop: 20,
+                    borderRadius: 10,
+                    marginBottom: 20,
+                    alignSelf: "center",
+                  }}
                 />
               )}
             </View>
