@@ -14,6 +14,7 @@ import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 import { UPLOAD_URL } from "@/API/upload";
 import { useAnalysis } from "@/providers/analysis-provider";
 
@@ -44,6 +45,20 @@ const ProductsScreen = (props: Props) => {
     requestPermissions();
   }, []);
 
+  const resizeImage = async (uri: string) => {
+    try {
+      const manipResult = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 800 } }], // Adjust the width as needed
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG } // Compress image to reduce size
+      );
+      return manipResult.uri;
+    } catch (error) {
+      console.error("Error resizing image:", error);
+      return uri;
+    }
+  };
+
   const uploadImage = async (fromCamera: boolean) => {
     let result;
     if (fromCamera) {
@@ -63,8 +78,9 @@ const ProductsScreen = (props: Props) => {
     }
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
-      // Send the image to the backend
+      const resizedUri = await resizeImage(result.assets[0].uri);
+      setSelectedImage(resizedUri);
+      // Send the resized image to the backend
       const formData = new FormData();
       formData.append("image", {
         uri: result.assets[0].uri,
