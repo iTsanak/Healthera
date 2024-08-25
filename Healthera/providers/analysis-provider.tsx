@@ -58,7 +58,7 @@ export const AnalysisProvider: React.FC<{ children: React.ReactNode }> = ({
     if (uuid) {
       setStatus("pending");
       checkAnalysis();
-      intervalId = setInterval(checkAnalysis, 5000); // Check every 5 seconds
+      intervalId = setInterval(checkAnalysis, 1000); // Check every 5 seconds
     }
 
     return () => {
