@@ -1,10 +1,10 @@
 import {
   View,
-  Text,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  useColorScheme,
 } from "react-native";
 import React, { useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
@@ -19,8 +19,14 @@ import * as z from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SocialButton from "@/components/Button/social-sign-in-buttons";
-import { LOGIN_URL, LoginRequestData, LoginResponseData } from "@/API/login";
-import axios from "axios";
+import {
+  LOGIN_ENDPOINT,
+  LoginRequestData,
+  LoginResponseData,
+} from "@/API/login";
+import { StatusBar } from "expo-status-bar";
+import { useAPI } from "@/providers/api-provider";
+import logAxiosError from "@/lib/axios-better-errors";
 
 type Props = {};
 
@@ -33,8 +39,10 @@ const formSchema = z.object({
 });
 
 const SignInScreen = (props: Props) => {
+  const theme = useColorScheme() ?? "dark";
   const { login, getDeviceId } = useSession();
   const [loginErrorMessage, setLoginErrorMessage] = useState("");
+  const { api } = useAPI();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -60,7 +68,7 @@ const SignInScreen = (props: Props) => {
       };
 
       const response: LoginResponseData = (
-        await axios.post(LOGIN_URL, requestData)
+        await api.post(LOGIN_ENDPOINT, requestData)
       ).data;
 
       await login(response);
@@ -74,12 +82,14 @@ const SignInScreen = (props: Props) => {
       setLoginErrorMessage(
         "Password, email or combination are invalid. Please try again.",
       );
-      console.log("[SIGN_IN_SCREEN]:", error);
+      logAxiosError(error, "[SIGN_IN_SCREEN]: SUBMITTING");
     }
   };
 
   return (
     <ThemedView className="flex-1">
+      <StatusBar style={theme === "light" ? "dark" : "light"} />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -160,7 +170,7 @@ const SignInScreen = (props: Props) => {
                 <View className="mb-7 flex-row justify-center">
                   <View className="mx-2">
                     <SocialButton
-                      iconName="google"
+                      iconName="logo-google"
                       onPress={() => {
                         /* Handle Google sign-up */
                       }}
@@ -168,7 +178,7 @@ const SignInScreen = (props: Props) => {
                   </View>
                   <View className="mx-2">
                     <SocialButton
-                      iconName="facebook"
+                      iconName="logo-facebook"
                       onPress={() => {
                         /* Handle Facebook sign-up */
                       }}
@@ -176,7 +186,7 @@ const SignInScreen = (props: Props) => {
                   </View>
                   <View className="mx-2">
                     <SocialButton
-                      iconName="fingerprint"
+                      iconName="finger-print"
                       onPress={() => {
                         /* Handle biometric sign-up */
                       }}

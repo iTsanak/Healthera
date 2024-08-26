@@ -1,14 +1,11 @@
 import {
-  StyleSheet,
   Switch,
-  Text,
   TouchableOpacity,
   useColorScheme,
   View,
   ViewProps,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "../ThemedText";
 import { Colors } from "@/constants/Colors";
 

@@ -6,11 +6,13 @@ import IconTitleArrow from "@/components/SpecialButtons/icon-title-arrow";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import Avatar from "@/components/Profile/avatar";
-import LogoutModal from "@/components/Modal/logout";
+import LogoutModal from "@/components/Modals/logout";
+import { useSession } from "@/providers/session-provider";
 
 type Props = {};
 
 const ProfileScreen = (props: Props) => {
+  const { user } = useSession();
   const theme = useColorScheme() ?? "dark";
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   return (
@@ -27,6 +29,7 @@ const ProfileScreen = (props: Props) => {
             <Avatar
               imageUri="https://utfs.io/f/e96b95ab-b00a-4801-bcc7-4946f71c11f2-cnxr61.jpeg"
               showName={true}
+              user={user || undefined}
               showBadge={true}
               size={128}
             />

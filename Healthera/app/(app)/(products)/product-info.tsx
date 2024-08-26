@@ -2,21 +2,19 @@ import {
   View,
   ScrollView,
   useColorScheme,
-  Pressable,
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { SafeAreaView } from "react-native-safe-area-context";
-import LogoutModal from "@/components/Modal/logout";
-import AvatarTopNavBar from "@/components/Navigation/avatar-top-navbar";
 import { ThemedText } from "@/components/ThemedText";
-import { router } from "expo-router";
 import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import CircularProgressBar from "@/components/progress-bar";
-import { useAnalysis } from "@/providers/analysis-provider";
+import { GeminiJsonType } from "@/providers/analysis-provider";
+import IngredientsMap from "@/components/Product/ingredient-card";
+import { useLocalSearchParams } from "expo-router";
 
 type Props = {};
 
@@ -25,9 +23,16 @@ const ProductsScreen = (props: Props) => {
   const [sortOrder, setSortOrder] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const { result } = useAnalysis();
+  const params = useLocalSearchParams();
 
-  // const healthScore = Math.floor(Math.random() * (100 - 0 + 1));
+  console.log(params);
+
+  if (!params.result) {
+    return null;
+  }
+
+  const result: GeminiJsonType = JSON.parse(String(params.result));
+
   const healthScore = result?.overall_score ?? 0;
 
   return (
@@ -132,19 +137,16 @@ const ProductsScreen = (props: Props) => {
                 </View>
               </View>
 
-              {result?.ingredients &&
-                Object.entries(result.ingredients).map(
-                  ([name, info], index) => (
-                    <View key={index} className="mt-10">
-                      <ThemedText style={{ color: Colors[theme].accent }}>
-                        {name} (Score: {info.score})
-                      </ThemedText>
-                      <ThemedText className="text-sm">
-                        {info["notes/description"]}
-                      </ThemedText>
-                    </View>
-                  ),
-                )}
+              {result && <IngredientsMap result={result} />}
+
+              {/* {result?.ingredients.map((ingredient, index) => (
+                <View key={index} className="mt-10">
+                  <ThemedText style={{ color: Colors[theme].accent }}>
+                    {ingredient[0]} (Score: {ingredient[1]})
+                  </ThemedText>
+                  <ThemedText className="text-sm">{ingredient[2]}</ThemedText>
+                </View>
+              ))} */}
             </View>
           </ScrollView>
         </View>

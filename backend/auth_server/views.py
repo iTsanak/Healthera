@@ -1,3 +1,4 @@
+from datetime import timedelta
 from dj_rest_auth.app_settings import api_settings
 from dj_rest_auth.registration.views import SocialLoginView
 from dj_rest_auth.registration.views import RegisterView
@@ -14,6 +15,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .serializers import CustomLoginSerializer, CustomTokenRefreshSerializer, CustomRegisterSerializer
 from users.models import User
+
+from django.conf import settings
 
 
 class GoogleLogin(SocialLoginView):
@@ -72,22 +75,25 @@ class CustomTokenRefreshView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        user_id = serializer.validated_data['user']['id']
+        # user_id = serializer.validated_data['user']['id']
         old_refresh_token = serializer.validated_data['refresh']
 
-        # Blacklist the old refresh token
-        try:
-            old_refresh_token.blacklist()
-        except AttributeError:
-            pass
+        old_refresh_token.set_exp(
+            settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'])
 
-        # Generate a new refresh token and access token
-        user = User.objects.get(id=user_id)
-        access_token, refresh_token = jwt_encode(user)
+        # # Blacklist the old refresh token
+        # try:
+        #     old_refresh_token.blacklist()
+        # except AttributeError:
+        #     pass
+
+        # # Generate a new refresh token and access token
+        # user = User.objects.get(id=user_id)
+        # access_token, refresh_token = jwt_encode(user)
 
         response_data = {
-            'refresh': str(refresh_token),
-            'access': str(access_token),
+            'refresh': str(old_refresh_token),
+            'access': str(old_refresh_token.access_token),
         }
 
         return Response(response_data, status=status.HTTP_200_OK)

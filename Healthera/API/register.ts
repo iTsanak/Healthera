@@ -5,6 +5,8 @@ export type RegisterRequestData = {
   password1: string;
   password2: string;
   device_id: string;
+  first_name: string;
+  last_name?: string;
   username?: string;
   dob?: string;
   phone_number?: string;
@@ -24,4 +26,8 @@ export type RegisterResponseData = {
 
 export const REGISTER_URL = qs.stringifyUrl({
   url: `${process.env.EXPO_PUBLIC_REST_API_SERVER}/api/v1/auth/register/`,
+});
+
+export const REGISTER_ENDPOINT = qs.stringifyUrl({
+  url: `/api/v1/auth/register/`,
 });
