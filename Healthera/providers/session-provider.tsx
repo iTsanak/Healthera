@@ -1,4 +1,11 @@
-import React, { createContext, useState, useContext, useMemo } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useMemo,
+  useRef,
+  useEffect,
+} from "react";
 import { LoginResponseData } from "@/API/login";
 import { RegisterResponseData } from "@/API/register";
 import { ChangeNameResponseData } from "@/API/change-name";
@@ -17,7 +24,10 @@ import {
   RefreshJWTRequestData,
   RefreshJWTResponseData,
 } from "@/API/refresh-jwt";
+import logAxiosError from "@/lib/axios-better-errors";
 // TODO use SecureStore from "expo-secure-store"
+
+const REFRESH_INTERVAL = 4 * 60 * 60 * 1000; // 4 hour in milliseconds
 
 // TODO update User Modal
 export type SessionUser = {
@@ -35,10 +45,13 @@ type SessionContextType = {
   login: (data: LoginResponseData) => Promise<void>;
   logout: () => Promise<void>;
   changeName: (data: ChangeNameResponseData) => Promise<void>;
-  getAccessToken: () => Promise<string>;
+  getAccessToken: () => Promise<string | null>;
   getRefreshToken: () => Promise<string>;
   loadStoredUser: () => Promise<SessionUser | null | undefined>;
   getDeviceId: () => Promise<string>;
+  refreshJWT: () => Promise<string | null>;
+  refreshAccessToken: () => Promise<string | null>;
+  verifyIfAccessTokenIsValid: (accessToken: string) => Promise<boolean>;
 };
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -55,6 +68,8 @@ export function SessionProvider({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const [user, setUser] = useState<SessionUser | null>(null);
+  const [lastRefreshTime, setLastRefreshTime] = useState<number>(Date.now());
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const register = async (data: RegisterResponseData) => {
     // TODO profile image missing
@@ -104,6 +119,7 @@ export function SessionProvider({
     // TODO implementation missing
     return false;
   };
+
   const changePassword = async () => {
     // TODO implementation missing
     return false;
@@ -143,9 +159,9 @@ export function SessionProvider({
       await axios.post(VERIFY_TOKEN_URL, requestData);
       isValid = true;
     } catch (error) {
-      console.log(
-        "[SESSION_PROVIDER]: error verifyIfAccessTokenIsValid:",
+      logAxiosError(
         error,
+        "[SESSION_PROVIDER]: error verifyIfAccessTokenIsValid:",
       );
     }
     return isValid;
@@ -159,8 +175,8 @@ export function SessionProvider({
         console.log(
           "[SESSION_PROVIDER]: Error, refreshAccessToken: no refresh token found",
         );
-        logout();
-        return "";
+        await logout();
+        return null;
       }
       const requestData: RefreshTokenRequestData = { refresh: refreshToken };
       const responseData: RefreshTokenResponseData = (
@@ -169,13 +185,12 @@ export function SessionProvider({
       await setAccessToken(responseData.access);
       newAccessToken = responseData.access;
     } catch (error) {
-      console.log("[SESSION_PROVIDER]: error refreshAccessToken:", error);
+      logAxiosError(error, "[SESSION_PROVIDER]: error refreshAccessToken:");
     }
     return newAccessToken;
   };
 
   const refreshJWT = async () => {
-    let newAccessToken = null;
     try {
       const deviceId = await getDeviceId();
       const refreshToken = await getRefreshToken();
@@ -183,8 +198,7 @@ export function SessionProvider({
         console.log(
           "[SESSION_PROVIDER]: Error, refreshJWT: no refresh token found",
         );
-        logout();
-        return "";
+        return null;
       }
       const requestData: RefreshJWTRequestData = {
         refresh: refreshToken,
@@ -195,11 +209,11 @@ export function SessionProvider({
       ).data;
       await setRefreshToken(responseData.refresh);
       await setAccessToken(responseData.access);
-      newAccessToken = responseData.access;
+      return responseData.access;
     } catch (error) {
-      console.log("[SESSION_PROVIDER]: error refreshJWT:", error);
+      logAxiosError(error, "[SESSION_PROVIDER]: error refreshJWT:");
+      return null;
     }
-    return newAccessToken;
   };
 
   const setAccessToken = async (token: string) => {
@@ -211,42 +225,8 @@ export function SessionProvider({
     // TODO: this should use SecureStore
     let accessToken = await AsyncStorage.getItem("ACCESS_TOKEN");
     if (!accessToken) {
-      console.log(
-        "[SESSION_PROVIDER]: Error, getAccessToken: no access token found",
-      );
-      logout();
-      return "";
+      console.log("[SESSION_PROVIDER]: getAccessToken: no access token found");
     }
-
-    if (!(await verifyIfAccessTokenIsValid(accessToken))) {
-      // let newAccessToken = await refreshAccessToken();
-      // if (newAccessToken) {
-      //   accessToken = newAccessToken;
-      // } else {
-      //   newAccessToken = await refreshJWT();
-      //   if (newAccessToken) {
-      //     accessToken = newAccessToken;
-      //   } else {
-      //     console.log(
-      //       "[SESSION_PROVIDER]: Error, getAccessToken: failed to refresh JWT",
-      //     );
-      //     logout();
-      //     return "";
-      //   }
-      // }
-
-      let newAccessToken = await refreshJWT();
-      if (newAccessToken) {
-        accessToken = newAccessToken;
-      } else {
-        console.log(
-          "[SESSION_PROVIDER]: Error, getAccessToken: failed to refresh JWT",
-        );
-        logout();
-        return "";
-      }
-    }
-
     return accessToken;
   };
 
@@ -307,6 +287,44 @@ export function SessionProvider({
     return deviceId;
   };
 
+  useEffect(() => {
+    const startRefreshInterval = () => {
+      if (refreshIntervalRef.current) {
+        console.log(
+          "[SESSION_PROVIDER]: clearInterval(refreshIntervalRef.current);",
+        );
+        clearInterval(refreshIntervalRef.current);
+      }
+
+      refreshIntervalRef.current = setInterval(async () => {
+        if (user) {
+          const newAccessToken = await refreshJWT();
+          if (newAccessToken) {
+            console.log("[SESSION_PROVIDER]: setLastRefreshTime(Date.now());");
+            setLastRefreshTime(Date.now());
+          } else {
+            console.log("[SESSION_PROVIDER]: Failed to refresh JWT");
+            await logout();
+          }
+        }
+      }, REFRESH_INTERVAL);
+    };
+
+    if (user) {
+      console.log("[SESSION_PROVIDER]: startRefreshInterval");
+      startRefreshInterval();
+    } else if (refreshIntervalRef.current) {
+      console.log("[SESSION_PROVIDER]: clearInterval");
+      clearInterval(refreshIntervalRef.current);
+    }
+
+    return () => {
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+    };
+  }, [user]);
+
   const contextMemo = useMemo(
     () => ({
       user,
@@ -318,6 +336,9 @@ export function SessionProvider({
       getRefreshToken,
       loadStoredUser,
       getDeviceId,
+      refreshJWT,
+      refreshAccessToken,
+      verifyIfAccessTokenIsValid,
     }),
     [user],
   );

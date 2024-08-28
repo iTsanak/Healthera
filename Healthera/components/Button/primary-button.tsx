@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, TouchableOpacity, View, ViewProps } from "react-native";
+import { TouchableOpacity, View, ViewProps } from "react-native";
 import { ThemedText, ThemedTextProps } from "../ThemedText";
 
 export type PrimaryButtonProps = {

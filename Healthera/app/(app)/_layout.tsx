@@ -1,4 +1,4 @@
-import SplashScreenL from "@/components/LoadingScreens/SplashScreen";
+import SplashScreenPlain from "@/components/LoadingScreens/splash-screen-plain";
 import { AnalysisProvider } from "@/providers/analysis-provider";
 import { useSession } from "@/providers/session-provider";
 import { Redirect, Stack } from "expo-router";
@@ -20,7 +20,7 @@ export default function AppLayout() {
   }, [user, loadStoredUser]);
 
   if (loading) {
-    return <SplashScreenL />;
+    return <SplashScreenPlain />;
   }
 
   if (!user) {

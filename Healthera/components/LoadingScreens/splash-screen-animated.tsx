@@ -1,6 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, useColorScheme } from "react-native";
+import { StyleSheet, View, useColorScheme } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -14,7 +14,7 @@ const duration = 2000;
 const easing = Easing.bezier(0.25, -0.5, 0.25, 1);
 const letters = "HEALTHERA".split("");
 
-export default function SplashScreenL() {
+const SplashScreenAnimated = () => {
   // Initialize shared values for each letter
   const animatedValues = letters.map(() => useSharedValue(0));
   // Initialize the shared value for the loader animation
@@ -86,7 +86,7 @@ export default function SplashScreenL() {
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -124,3 +124,5 @@ const styles = StyleSheet.create({
     height: 50,
   },
 });
+
+export default SplashScreenAnimated;
