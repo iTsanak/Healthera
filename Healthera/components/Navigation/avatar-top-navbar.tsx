@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, useColorScheme } from "react-native";
+import { View, TouchableOpacity, useColorScheme } from "react-native";
 import React from "react";
 import { ThemedText } from "../ThemedText";
 import { Ionicons } from "@expo/vector-icons";
@@ -31,7 +31,9 @@ const AvatarTopNavBar = ({ username }: Props) => {
         <ThemedText style={{ color: Colors[theme].accent }}>
           Hi, Welcome back!
         </ThemedText>
-        <ThemedText>{username}</ThemedText>
+        <ThemedText style={{ color: Colors[theme].text }}>
+          {username}
+        </ThemedText>
       </View>
 
       <TouchableOpacity

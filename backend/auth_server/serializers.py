@@ -58,12 +58,17 @@ class CustomLoginSerializer(LoginSerializer):
 
 class CustomRegisterSerializer(RegisterSerializer):
     device_id = serializers.CharField(required=True)
-    phone_number = serializers.CharField(required=False)
+    first_name = serializers.CharField(required=True)
+
+    last_name = serializers.CharField(required=False, allow_blank=True)
+    phone_number = serializers.CharField(required=False, allow_blank=True)
     dob = serializers.DateField(required=False)
 
     def save(self, request):
         user = super().save(request)
         user.device_id = self.validated_data['device_id']
+        user.first_name = self.validated_data['first_name']
+        user.last_name = self.validated_data.get('last_name', '')
         user.phone_number = self.validated_data.get('phone_number', '')
         user.dob = self.validated_data.get('dob', None)
         user.save()

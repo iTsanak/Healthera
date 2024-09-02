@@ -22,3 +22,7 @@ export type LoginResponseData = {
 export const LOGIN_URL = qs.stringifyUrl({
   url: `${process.env.EXPO_PUBLIC_REST_API_SERVER}/api/v1/auth/login/`,
 });
+
+export const LOGIN_ENDPOINT = qs.stringifyUrl({
+  url: `/api/v1/auth/login/`,
+});

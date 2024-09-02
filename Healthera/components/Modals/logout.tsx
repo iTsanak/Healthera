@@ -1,17 +1,5 @@
-import {
-  Modal,
-  Pressable,
-  View,
-  TextInput,
-  useWindowDimensions,
-  useColorScheme,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { Modal, Pressable, View, useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRef } from "react";
-import { MaterialIcons } from "@expo/vector-icons";
 import { ThemedView } from "../ThemedView";
 import { ThemedText } from "../ThemedText";
 import PrimaryButton from "../Button/primary-button";

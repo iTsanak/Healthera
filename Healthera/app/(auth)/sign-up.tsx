@@ -1,6 +1,5 @@
 import {
   View,
-  Text,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
@@ -19,20 +18,22 @@ import { useSession } from "@/providers/session-provider";
 import * as z from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
-import { parse, isValid, format } from "date-fns";
 import {
-  CHECK_EMAIL_URL,
+  CHECK_EMAIL_ENDPOINT,
   CheckEmailRequestData,
   CheckEmailResponseData,
 } from "@/API/check-email";
-import axios from "axios";
 import {
-  REGISTER_URL,
+  REGISTER_ENDPOINT,
   RegisterRequestData,
   RegisterResponseData,
 } from "@/API/register";
+import SocialButton from "@/components/Button/social-sign-in-buttons";
+import { StatusBar } from "expo-status-bar";
+import { useAPI } from "@/providers/api-provider";
+import logAxiosError from "@/lib/axios-better-errors";
+
+// import { parse, isValid, format } from "date-fns";
 
 type Props = {};
 
@@ -46,7 +47,8 @@ const dateValidator = (value: string) => {
 };
 
 const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().optional(),
   password: z
     .string()
     .min(1, "Password is required")
@@ -76,11 +78,13 @@ const SignUpScreen = (props: Props) => {
   const theme = useColorScheme() ?? "dark";
   const { register, getDeviceId } = useSession();
   const [registerErrorMessage, setRegisterErrorMessage] = useState("");
+  const { api } = useAPI();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      first_name: "",
+      last_name: "",
       password: "",
       email: "",
       // phoneNumber: "",
@@ -96,7 +100,7 @@ const SignUpScreen = (props: Props) => {
     };
 
     const response: CheckEmailResponseData = (
-      await axios.post(CHECK_EMAIL_URL, requestData)
+      await api.post(CHECK_EMAIL_ENDPOINT, requestData)
     ).data;
 
     if (response.code !== "AVAILABLE" && response.code !== "IN_USE") {
@@ -127,10 +131,12 @@ const SignUpScreen = (props: Props) => {
         password1: values.password,
         password2: values.password,
         device_id: device_id,
+        first_name: values.first_name,
+        last_name: values.last_name,
       };
 
       const response: RegisterResponseData = (
-        await axios.post(REGISTER_URL, requestData)
+        await api.post(REGISTER_ENDPOINT, requestData)
       ).data;
 
       await register(response);
@@ -141,13 +147,15 @@ const SignUpScreen = (props: Props) => {
       }
       router.replace("/");
     } catch (error) {
-      setRegisterErrorMessage("Username is already taken.");
-      console.log("[SIGN_UP_SCREEN]:", error);
+      setRegisterErrorMessage("Email is already taken.");
+      logAxiosError(error, "[SIGN_UP_SCREEN]: SUBMITTING");
     }
   };
 
   return (
     <ThemedView className="flex-1">
+      <StatusBar style={theme === "light" ? "dark" : "light"} />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -172,15 +180,15 @@ const SignUpScreen = (props: Props) => {
 
                 <Controller
                   control={form.control}
-                  name="name"
+                  name="first_name"
                   disabled={isLoading}
                   render={({
                     field: { value, onChange, onBlur },
                     fieldState: { error },
                   }) => (
                     <FormTextField
-                      title="Full Name"
-                      placeholder="John Smith..."
+                      title="First Name *"
+                      placeholder="John"
                       handleTextChange={onChange}
                       value={value}
                       className="mt-2"
@@ -188,6 +196,26 @@ const SignUpScreen = (props: Props) => {
                     />
                   )}
                 />
+
+                <Controller
+                  control={form.control}
+                  name="last_name"
+                  disabled={isLoading}
+                  render={({
+                    field: { value, onChange, onBlur },
+                    fieldState: { error },
+                  }) => (
+                    <FormTextField
+                      title="Last Name"
+                      placeholder="Smith"
+                      handleTextChange={onChange}
+                      value={value}
+                      className="mt-2"
+                      error={error}
+                    />
+                  )}
+                />
+
                 <Controller
                   control={form.control}
                   name="password"
@@ -197,7 +225,7 @@ const SignUpScreen = (props: Props) => {
                     fieldState: { error },
                   }) => (
                     <FormTextField
-                      title="Password"
+                      title="Password *"
                       placeholder="*****"
                       handleTextChange={onChange}
                       value={value}
@@ -216,7 +244,7 @@ const SignUpScreen = (props: Props) => {
                     fieldState: { error },
                   }) => (
                     <FormTextField
-                      title="Email"
+                      title="Email *"
                       placeholder="email@domain.com"
                       handleTextChange={onChange}
                       value={value}
@@ -272,7 +300,7 @@ const SignUpScreen = (props: Props) => {
                     <ThemedText
                       className="text-xs text-secondary-light dark:text-secondary-dark"
                       onPress={() => {
-                        console.log("pressed");
+                        router.push("/privacy-policy");
                       }}
                     >
                       Terms of Use
@@ -281,7 +309,7 @@ const SignUpScreen = (props: Props) => {
                     <ThemedText
                       className="text-xs text-secondary-light dark:text-secondary-dark"
                       onPress={() => {
-                        console.log("pressed");
+                        router.push("/privacy-policy");
                       }}
                     >
                       Privacy Policy
@@ -299,61 +327,44 @@ const SignUpScreen = (props: Props) => {
                   <ThemedText>or sign up with</ThemedText>
 
                   <View className="mt-2 flex-row gap-x-2">
-                    <View className="overflow-hidden rounded-full">
-                      <TouchableOpacity
-                        className="bg-secondary-light p-2 dark:bg-secondary-dark"
+                    <View className="mx-2">
+                      <SocialButton
+                        iconName="logo-google"
                         onPress={() => {
-                          console.log("Pressed");
+                          /* Handle biometric sign-up */
                         }}
-                      >
-                        <Ionicons
-                          name="logo-google"
-                          size={30}
-                          color={Colors[theme].background}
-                        />
-                      </TouchableOpacity>
+                      />
                     </View>
-                    <View className="overflow-hidden rounded-full">
-                      <TouchableOpacity
-                        className="bg-secondary-light p-2 dark:bg-secondary-dark"
+                    <View className="mx-2">
+                      <SocialButton
+                        iconName="logo-facebook"
                         onPress={() => {
-                          console.log("Pressed");
+                          /* Handle biometric sign-up */
                         }}
-                      >
-                        <Ionicons
-                          name="logo-facebook"
-                          size={30}
-                          color={Colors[theme].background}
-                        />
-                      </TouchableOpacity>
+                      />
                     </View>
-                    <View className="overflow-hidden rounded-full">
-                      <TouchableOpacity
-                        className="bg-secondary-light p-2 dark:bg-secondary-dark"
+                    <View className="mx-2">
+                      <SocialButton
+                        iconName="finger-print"
                         onPress={() => {
-                          console.log("Pressed");
+                          /* Handle biometric sign-up */
                         }}
-                      >
-                        <Ionicons
-                          name="finger-print"
-                          size={30}
-                          color={Colors[theme].background}
-                        />
-                      </TouchableOpacity>
+                      />
                     </View>
                   </View>
 
-                  <ThemedText className="mb-10 mt-4">
-                    already have an account?{" "}
-                    <ThemedText
-                      className="text-secondary-light dark:text-secondary-dark"
-                      onPress={() => {
-                        console.log("pressed");
-                      }}
-                    >
-                      Log in
+                  <View className="mb-10 mt-4 flex-row items-center">
+                    <ThemedText className="mx-2">
+                      already have an account?
                     </ThemedText>
-                  </ThemedText>
+                    <TouchableOpacity
+                      onPress={() => router.replace("/sign-in")}
+                    >
+                      <ThemedText className="font-bold text-green-600">
+                        Log in
+                      </ThemedText>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             </ScrollView>

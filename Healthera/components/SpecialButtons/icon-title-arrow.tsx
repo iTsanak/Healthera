@@ -1,6 +1,4 @@
 import {
-  StyleSheet,
-  Text,
   TouchableOpacity,
   useColorScheme,
   View,
