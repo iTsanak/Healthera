@@ -18,6 +18,10 @@ import { UPLOAD_URL } from "@/API/upload";
 import { useAnalysis } from "@/providers/analysis-provider";
 import { useAPI } from "@/providers/api-provider";
 import logAxiosError from "@/lib/axios-better-errors";
+import { ActivityIndicator } from "react-native";
+
+
+
 
 type Props = {};
 
@@ -26,6 +30,7 @@ const NewScreen = (props: Props) => {
   const [sortOrder, setSortOrder] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { api } = useAPI();
 
   const { setUuid } = useAnalysis();
@@ -42,6 +47,8 @@ const NewScreen = (props: Props) => {
       alert("Sorry, we need photo library permissions to make this work!");
     }
   };
+
+  
 
   React.useEffect(() => {
     requestPermissions();
@@ -62,6 +69,7 @@ const NewScreen = (props: Props) => {
   };
 
   const uploadImage = async (fromCamera: boolean) => {
+   
     let result;
     if (fromCamera) {
       result = await ImagePicker.launchCameraAsync({
@@ -78,7 +86,7 @@ const NewScreen = (props: Props) => {
         quality: 1,
       });
     }
-
+    setIsLoading(true);
     if (!result.canceled) {
       const resizedUri = await resizeImage(result.assets[0].uri);
       setSelectedImage(resizedUri);
@@ -100,10 +108,14 @@ const NewScreen = (props: Props) => {
         const data = response.data;
         console.log(data);
         setUuid(data.uuid); // This will trigger the polling
+        console.log("[NEW_SCREEN]: Image uploaded successfully");
+        setIsLoading(false); // End loading
       } catch (error) {
         console.log("[NEW_SCREEN]: Error uploading image", error);
         logAxiosError(error, "[NEW_SCREEN]: Error uploading image");
-      }
+      } 
+    } else {
+      setIsLoading(false); // End loading if canceled
     }
   };
 
@@ -120,7 +132,6 @@ const NewScreen = (props: Props) => {
       <SafeAreaView className="flex-1">
         <View className="flex-1 items-center">
           <SimpleTopNavBar title="Scan New Product" />
-
           <ScrollView
             showsVerticalScrollIndicator={false}
             className="w-full"
@@ -146,18 +157,25 @@ const NewScreen = (props: Props) => {
                   </ThemedText>
                 </TouchableOpacity>
               </View>
-              {selectedImage && (
-                <Image
-                  source={{ uri: selectedImage }}
-                  style={{
-                    width: 200,
-                    height: 200,
-                    marginTop: 20,
-                    borderRadius: 10,
-                    marginBottom: 20,
-                    alignSelf: "center",
-                  }}
-                />
+              {isLoading ? (
+                <View style={{ marginTop: 20, marginBottom: 20 }}>
+                  {/* Display the loading animation */}
+                  <ActivityIndicator size="large" color={Colors[theme].secondary} />
+                </View>
+              ) : (
+                selectedImage && (
+                  <Image
+                    source={{ uri: selectedImage }}
+                    style={{
+                      width: 200,
+                      height: 200,
+                      marginTop: 20,
+                      borderRadius: 10,
+                      marginBottom: 20,
+                      alignSelf: "center",
+                    }}
+                  />
+                )
               )}
             </View>
           </ScrollView>
@@ -166,5 +184,4 @@ const NewScreen = (props: Props) => {
     </ThemedView>
   );
 };
-
 export default NewScreen;
