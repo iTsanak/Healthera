@@ -1,0 +1,27 @@
+# REQUEST EXAMPLE
+POST http://localhost:8000/api/v1/auth/login/
+Content-Type: application/json
+
+{
+"username": "test1",
+"email": "test1@test.com",
+"password": "Pass123!@#",
+"device_id": "SameAsRegisterOrNewOne"
+}
+
+# OBSERVATIONS:
+# N/A
+
+# RESPONSE EXAMPLE:
+
+# {
+#   "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIzMDU3ODMwLCJpYXQiOjE3MjMwNTY2MzAsImp0aSI6IjVlZGMxZTEzZTY4YjRmZmRiZmJhMWM3NjMwYjQ1YTE5IiwidXNlcl9pZCI6Ijk3MzcxNjBhLThhZmMtNGY2MC1hM2E4LWFiZTA2MTYxMzE5NiIsInVzZXIiOnsiaWQiOiI5NzM3MTYwYS04YWZjLTRmNjAtYTNhOC1hYmUwNjE2MTMxOTYiLCJ1c2VybmFtZSI6InRlc3QxIiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwicHJvZmlsZV9pbWFnZV91cmwiOiIiLCJkb2IiOiIxOTkwLTAxLTAxIiwicGhvbmVfbnVtYmVyIjoiKzEyMzQ1Njc4OSIsImRldmljZV9pZCI6IlVuaXF1ZUlEMTIzIiwiZmlyc3RfbmFtZSI6IiIsImxhc3RfbmFtZSI6IiIsImlzX3N0YWZmIjpmYWxzZX19.-J_Zm8ZQdpfwlhhyy7cOa4mAal6DGgNm1IXfcMZ8WTU",
+#   "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyMzE0MzAzMCwiaWF0IjoxNzIzMDU2NjMwLCJqdGkiOiI1ZTdiZmQxODM0MWM0OTBiOGY1OTJjNTYwYTIyNmJiMiIsInVzZXJfaWQiOiI5NzM3MTYwYS04YWZjLTRmNjAtYTNhOC1hYmUwNjE2MTMxOTYiLCJ1c2VyIjp7ImlkIjoiOTczNzE2MGEtOGFmYy00ZjYwLWEzYTgtYWJlMDYxNjEzMTk2IiwidXNlcm5hbWUiOiJ0ZXN0MSIsImVtYWlsIjoidGVzdEB0ZXN0LmNvbSIsInByb2ZpbGVfaW1hZ2VfdXJsIjoiIiwiZG9iIjoiMTk5MC0wMS0wMSIsInBob25lX251bWJlciI6IisxMjM0NTY3ODkiLCJkZXZpY2VfaWQiOiJVbmlxdWVJRDEyMyIsImZpcnN0X25hbWUiOiIiLCJsYXN0X25hbWUiOiIiLCJpc19zdGFmZiI6ZmFsc2V9fQ.g38ETWDKOqhQWPIUbLEberEATXnaDHnued8Jm1_Gjwc",
+#   "user": {
+#     "pk": "9737160a-8afc-4f60-a3a8-abe061613196",
+#     "username": "test1",
+#     "email": "test@test.com",
+#     "first_name": "",
+#     "last_name": ""
+#   }
+# }

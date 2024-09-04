@@ -2,7 +2,6 @@ import {
   Image,
   Pressable,
   StyleSheet,
-  Text,
   useColorScheme,
   View,
 } from "react-native";
@@ -10,15 +9,17 @@ import React from "react";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "../ThemedText";
+import { SessionUser } from "@/providers/session-provider";
 
 type Props = {
   imageUri: string;
   showName?: boolean;
+  user?: SessionUser;
   size?: number;
   showBadge?: boolean;
 };
 
-const Avatar = ({ imageUri, showName, size, showBadge }: Props) => {
+const Avatar = ({ imageUri, showName, size, showBadge, user }: Props) => {
   // 32 - 128px
   const theme = useColorScheme() ?? "dark";
   return (
@@ -55,10 +56,15 @@ const Avatar = ({ imageUri, showName, size, showBadge }: Props) => {
         )}
       </View>
       <ThemedText
-        style={{ display: showName ? "flex" : "none" }}
+        style={{
+          display: showName ? "flex" : "none",
+          color: Colors[theme].text,
+        }}
         className="mt-4 text-xl font-bold"
       >
-        NAME
+        {user
+          ? `${user.first_name} ${user.last_name}`
+          : "Error while loading name"}
       </ThemedText>
     </View>
   );

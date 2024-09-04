@@ -5,8 +5,6 @@ import React, {
   useImperativeHandle,
 } from "react";
 import {
-  LayoutAnimation,
-  Text,
   TextInput,
   TextInputProps,
   TouchableOpacity,

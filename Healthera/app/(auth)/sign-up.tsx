@@ -1,13 +1,12 @@
 import {
   View,
-  Text,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   useColorScheme,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { router } from "expo-router";
@@ -19,53 +18,144 @@ import { useSession } from "@/providers/session-provider";
 import * as z from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
+import {
+  CHECK_EMAIL_ENDPOINT,
+  CheckEmailRequestData,
+  CheckEmailResponseData,
+} from "@/API/check-email";
+import {
+  REGISTER_ENDPOINT,
+  RegisterRequestData,
+  RegisterResponseData,
+} from "@/API/register";
+import SocialButton from "@/components/Button/social-sign-in-buttons";
+import { StatusBar } from "expo-status-bar";
+import { useAPI } from "@/providers/api-provider";
+import logAxiosError from "@/lib/axios-better-errors";
+
+// import { parse, isValid, format } from "date-fns";
 
 type Props = {};
 
+// Regex for phone number validation
+const phoneRegex = /^\+?1?\d{9,15}$/;
+
+// Date format validation function
+const dateValidator = (value: string) => {
+  const date = new Date(value);
+  return !isNaN(date.getTime());
+};
+
 const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().optional(),
   password: z
     .string()
     .min(1, "Password is required")
     .min(8, "Password too short"),
   email: z.string().min(1, "Email is required").email("Invalid Email format"),
-  phoneNumber: z.string().min(1, "Phone number is required"),
-  dob: z.string().min(1, "Date of Birth is required"),
+  // phoneNumber: z
+  //   .string()
+  //   .min(1, "Phone number is required")
+  //   .regex(
+  //     phoneRegex,
+  //     "Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.",
+  //   ),
+  // dob: z
+  //   .string()
+  //   .min(1, "Date of Birth is required")
+  //   .refine((value) => {
+  //     const parsedDate = parse(value, "yyyy-MM-dd", new Date());
+  //     return isValid(parsedDate);
+  //   }, "Invalid date format. Use yyyy-MM-dd")
+  //   .transform((value) => {
+  //     const parsedDate = parse(value, "yyyy-MM-dd", new Date());
+  //     return format(parsedDate, "yyyy-MM-dd");
+  //   }),
 });
 
 const SignUpScreen = (props: Props) => {
   const theme = useColorScheme() ?? "dark";
-  const { signUp } = useSession();
+  const { register, getDeviceId } = useSession();
+  const [registerErrorMessage, setRegisterErrorMessage] = useState("");
+  const { api } = useAPI();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      first_name: "",
+      last_name: "",
       password: "",
       email: "",
-      phoneNumber: "",
-      dob: "",
+      // phoneNumber: "",
+      // dob: "",
     },
   });
 
   const isLoading = form.formState.isSubmitting;
 
+  const checkIfEmailIsAvailable = async (email: string) => {
+    const requestData: CheckEmailRequestData = {
+      email: email,
+    };
+
+    const response: CheckEmailResponseData = (
+      await api.post(CHECK_EMAIL_ENDPOINT, requestData)
+    ).data;
+
+    if (response.code !== "AVAILABLE" && response.code !== "IN_USE") {
+      console.log(
+        "[SIGN_UP_SCREEN]: CHECK EMAIL ERROR, response.code is invalid",
+      );
+    }
+
+    return response.code === "AVAILABLE";
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // TODO phone number format and date format are not easy for users
+    values.email = values.email.toLowerCase().trim();
     try {
-      console.log("SUBMITTING SIGN UP FORM", values);
+      console.log("[SIGN_UP_SCREEN]: SUBMITTING SIGN UP FORM", values);
+      setRegisterErrorMessage("");
+
+      if (!(await checkIfEmailIsAvailable(values.email))) {
+        setRegisterErrorMessage("Email already registered");
+        return;
+      }
+
+      const device_id = await getDeviceId();
+
+      const requestData: RegisterRequestData = {
+        email: values.email,
+        password1: values.password,
+        password2: values.password,
+        device_id: device_id,
+        first_name: values.first_name,
+        last_name: values.last_name,
+      };
+
+      const response: RegisterResponseData = (
+        await api.post(REGISTER_ENDPOINT, requestData)
+      ).data;
+
+      await register(response);
+
       form.reset();
-      signUp(values);
-      router.dismissAll();
+      if (router.canGoBack()) {
+        router.dismissAll();
+      }
       router.replace("/");
     } catch (error) {
-      console.log(error);
+      setRegisterErrorMessage("Email is already taken.");
+      logAxiosError(error, "[SIGN_UP_SCREEN]: SUBMITTING");
     }
   };
 
   return (
     <ThemedView className="flex-1">
+      <StatusBar style={theme === "light" ? "dark" : "light"} />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -80,17 +170,25 @@ const SignUpScreen = (props: Props) => {
               contentContainerStyle={{ alignItems: "center" }}
             >
               <View className="w-[80%]">
+                {!!registerErrorMessage && (
+                  <View className="py-4">
+                    <ThemedText className="text-center text-red-500">
+                      {registerErrorMessage}
+                    </ThemedText>
+                  </View>
+                )}
+
                 <Controller
                   control={form.control}
-                  name="name"
+                  name="first_name"
                   disabled={isLoading}
                   render={({
                     field: { value, onChange, onBlur },
                     fieldState: { error },
                   }) => (
                     <FormTextField
-                      title="Full Name"
-                      placeholder="John Smith..."
+                      title="First Name *"
+                      placeholder="John"
                       handleTextChange={onChange}
                       value={value}
                       className="mt-2"
@@ -98,6 +196,26 @@ const SignUpScreen = (props: Props) => {
                     />
                   )}
                 />
+
+                <Controller
+                  control={form.control}
+                  name="last_name"
+                  disabled={isLoading}
+                  render={({
+                    field: { value, onChange, onBlur },
+                    fieldState: { error },
+                  }) => (
+                    <FormTextField
+                      title="Last Name"
+                      placeholder="Smith"
+                      handleTextChange={onChange}
+                      value={value}
+                      className="mt-2"
+                      error={error}
+                    />
+                  )}
+                />
+
                 <Controller
                   control={form.control}
                   name="password"
@@ -107,7 +225,7 @@ const SignUpScreen = (props: Props) => {
                     fieldState: { error },
                   }) => (
                     <FormTextField
-                      title="Password"
+                      title="Password *"
                       placeholder="*****"
                       handleTextChange={onChange}
                       value={value}
@@ -126,7 +244,7 @@ const SignUpScreen = (props: Props) => {
                     fieldState: { error },
                   }) => (
                     <FormTextField
-                      title="Email"
+                      title="Email *"
                       placeholder="email@domain.com"
                       handleTextChange={onChange}
                       value={value}
@@ -136,7 +254,7 @@ const SignUpScreen = (props: Props) => {
                     />
                   )}
                 />
-                <Controller
+                {/* <Controller
                   control={form.control}
                   name="phoneNumber"
                   disabled={isLoading}
@@ -146,7 +264,7 @@ const SignUpScreen = (props: Props) => {
                   }) => (
                     <FormTextField
                       title="Mobile Number"
-                      placeholder="123-123-1234"
+                      placeholder="+1 123 123 1234"
                       handleTextChange={onChange}
                       value={value}
                       className="mt-4"
@@ -170,10 +288,9 @@ const SignUpScreen = (props: Props) => {
                       value={value}
                       className="mt-4"
                       error={error}
-                      keyboardType="number-pad"
                     />
                   )}
-                />
+                /> */}
 
                 <View className="mt-4 items-center">
                   <ThemedText className="text-xs">
@@ -183,7 +300,7 @@ const SignUpScreen = (props: Props) => {
                     <ThemedText
                       className="text-xs text-secondary-light dark:text-secondary-dark"
                       onPress={() => {
-                        console.log("pressed");
+                        router.push("/privacy-policy");
                       }}
                     >
                       Terms of Use
@@ -192,7 +309,7 @@ const SignUpScreen = (props: Props) => {
                     <ThemedText
                       className="text-xs text-secondary-light dark:text-secondary-dark"
                       onPress={() => {
-                        console.log("pressed");
+                        router.push("/privacy-policy");
                       }}
                     >
                       Privacy Policy
@@ -210,61 +327,44 @@ const SignUpScreen = (props: Props) => {
                   <ThemedText>or sign up with</ThemedText>
 
                   <View className="mt-2 flex-row gap-x-2">
-                    <View className="overflow-hidden rounded-full">
-                      <TouchableOpacity
-                        className="bg-secondary-light p-2 dark:bg-secondary-dark"
+                    <View className="mx-2">
+                      <SocialButton
+                        iconName="logo-google"
                         onPress={() => {
-                          console.log("Pressed");
+                          /* Handle biometric sign-up */
                         }}
-                      >
-                        <Ionicons
-                          name="logo-google"
-                          size={30}
-                          color={Colors[theme].background}
-                        />
-                      </TouchableOpacity>
+                      />
                     </View>
-                    <View className="overflow-hidden rounded-full">
-                      <TouchableOpacity
-                        className="bg-secondary-light p-2 dark:bg-secondary-dark"
+                    <View className="mx-2">
+                      <SocialButton
+                        iconName="logo-facebook"
                         onPress={() => {
-                          console.log("Pressed");
+                          /* Handle biometric sign-up */
                         }}
-                      >
-                        <Ionicons
-                          name="logo-facebook"
-                          size={30}
-                          color={Colors[theme].background}
-                        />
-                      </TouchableOpacity>
+                      />
                     </View>
-                    <View className="overflow-hidden rounded-full">
-                      <TouchableOpacity
-                        className="bg-secondary-light p-2 dark:bg-secondary-dark"
+                    <View className="mx-2">
+                      <SocialButton
+                        iconName="finger-print"
                         onPress={() => {
-                          console.log("Pressed");
+                          /* Handle biometric sign-up */
                         }}
-                      >
-                        <Ionicons
-                          name="finger-print"
-                          size={30}
-                          color={Colors[theme].background}
-                        />
-                      </TouchableOpacity>
+                      />
                     </View>
                   </View>
 
-                  <ThemedText className="mb-10 mt-4">
-                    already have an account?{" "}
-                    <ThemedText
-                      className="text-secondary-light dark:text-secondary-dark"
-                      onPress={() => {
-                        console.log("pressed");
-                      }}
-                    >
-                      Log in
+                  <View className="mb-10 mt-4 flex-row items-center">
+                    <ThemedText className="mx-2">
+                      already have an account?
                     </ThemedText>
-                  </ThemedText>
+                    <TouchableOpacity
+                      onPress={() => router.replace("/sign-in")}
+                    >
+                      <ThemedText className="font-bold text-green-600">
+                        Log in
+                      </ThemedText>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             </ScrollView>
