@@ -1,17 +1,5 @@
-import {
-  Modal,
-  Pressable,
-  View,
-  TextInput,
-  useWindowDimensions,
-  useColorScheme,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { Modal, Pressable, View, useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRef } from "react";
-import { MaterialIcons } from "@expo/vector-icons";
 import { ThemedView } from "../ThemedView";
 import { ThemedText } from "../ThemedText";
 import PrimaryButton from "../Button/primary-button";
@@ -27,7 +15,7 @@ export default function LogoutModal({
   onClose: () => void;
 }>) {
   const theme = useColorScheme() ?? "light";
-  const { signOut } = useSession();
+  const { logout } = useSession();
   return (
     <Modal
       animationType="slide"
@@ -66,8 +54,8 @@ export default function LogoutModal({
               <PrimaryButton
                 className="w-36"
                 title="Yes, Logout"
-                handlePress={() => {
-                  signOut();
+                handlePress={async () => {
+                  await logout();
                   router.replace("/");
                 }}
               />

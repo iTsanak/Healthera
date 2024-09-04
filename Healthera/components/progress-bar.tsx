@@ -67,7 +67,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
           r={radius}
           strokeWidth={strokeWidth}
         />
-        <Circle
+        {/* <Circle
           stroke="#e6e6e6"
           fill="none"
           cx={size / 2}
@@ -98,7 +98,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
           cy={size / 2}
           r={radius * 0.2}
           strokeWidth={strokeWidth * 0.2}
-        />
+        /> */}
         <AnimatedCircle
           stroke="url(#grad)"
           fill="none"
@@ -110,7 +110,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
           animatedProps={animatedProps}
           strokeLinecap="round"
         />
-        <AnimatedCircle
+        {/* <AnimatedCircle
           stroke="url(#grad)"
           fill="none"
           cx={size / 2}
@@ -153,7 +153,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
           strokeDasharray={`${circumference} ${circumference}`}
           animatedProps={animatedProps}
           strokeLinecap="round"
-        />
+        /> */}
       </Svg>
     </View>
   );

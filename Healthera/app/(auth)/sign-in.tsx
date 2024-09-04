@@ -1,12 +1,12 @@
 import {
   View,
-  Text,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  useColorScheme,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { router } from "expo-router";
@@ -19,6 +19,14 @@ import * as z from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SocialButton from "@/components/Button/social-sign-in-buttons";
+import {
+  LOGIN_ENDPOINT,
+  LoginRequestData,
+  LoginResponseData,
+} from "@/API/login";
+import { StatusBar } from "expo-status-bar";
+import { useAPI } from "@/providers/api-provider";
+import logAxiosError from "@/lib/axios-better-errors";
 
 type Props = {};
 
@@ -31,7 +39,10 @@ const formSchema = z.object({
 });
 
 const SignInScreen = (props: Props) => {
-  const { signIn } = useSession();
+  const theme = useColorScheme() ?? "dark";
+  const { login, getDeviceId } = useSession();
+  const [loginErrorMessage, setLoginErrorMessage] = useState("");
+  const { api } = useAPI();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -45,18 +56,40 @@ const SignInScreen = (props: Props) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      console.log("SUBMITTING SIGN IN FORM", values);
+      console.log("[SIGN_IN_SCREEN]: SUBMITTING SIGN IN FORM", values);
+      setLoginErrorMessage("");
+
+      const device_id = await getDeviceId();
+
+      const requestData: LoginRequestData = {
+        password: values.password,
+        email: values.email,
+        device_id: device_id,
+      };
+
+      const response: LoginResponseData = (
+        await api.post(LOGIN_ENDPOINT, requestData)
+      ).data;
+
+      await login(response);
+
       form.reset();
-      signIn(values);
-      router.dismissAll();
+      if (router.canGoBack()) {
+        router.dismissAll();
+      }
       router.replace("/");
     } catch (error) {
-      console.log(error);
+      setLoginErrorMessage(
+        "Password, email or combination are invalid. Please try again.",
+      );
+      logAxiosError(error, "[SIGN_IN_SCREEN]: SUBMITTING");
     }
   };
 
   return (
     <ThemedView className="flex-1">
+      <StatusBar style={theme === "light" ? "dark" : "light"} />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -72,6 +105,14 @@ const SignInScreen = (props: Props) => {
               className="flex-1"
               keyboardShouldPersistTaps="handled"
             >
+              {!!loginErrorMessage && (
+                <View className="py-4">
+                  <ThemedText className="text-center text-red-500">
+                    {loginErrorMessage}
+                  </ThemedText>
+                </View>
+              )}
+
               <Controller
                 control={form.control}
                 name="email"
@@ -129,7 +170,7 @@ const SignInScreen = (props: Props) => {
                 <View className="mb-7 flex-row justify-center">
                   <View className="mx-2">
                     <SocialButton
-                      iconName="google"
+                      iconName="logo-google"
                       onPress={() => {
                         /* Handle Google sign-up */
                       }}
@@ -137,7 +178,7 @@ const SignInScreen = (props: Props) => {
                   </View>
                   <View className="mx-2">
                     <SocialButton
-                      iconName="facebook"
+                      iconName="logo-facebook"
                       onPress={() => {
                         /* Handle Facebook sign-up */
                       }}
@@ -145,7 +186,7 @@ const SignInScreen = (props: Props) => {
                   </View>
                   <View className="mx-2">
                     <SocialButton
-                      iconName="fingerprint"
+                      iconName="finger-print"
                       onPress={() => {
                         /* Handle biometric sign-up */
                       }}

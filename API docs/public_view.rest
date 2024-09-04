@@ -1,0 +1,14 @@
+# REQUEST EXAMPLE
+GET http://localhost:8000/public-view
+Content-Type: application/json
+
+{}
+
+# OBSERVATIONS:
+# N/A
+
+# RESPONSE EXAMPLE:
+
+# {
+#   "message": "This is a public endpoint"
+# }
