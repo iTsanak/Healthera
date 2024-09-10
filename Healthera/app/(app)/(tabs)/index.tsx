@@ -74,6 +74,16 @@ const PastProductsList = () => {
     );
   }
 
+  const showStatus = () => {
+    if (isFetchingNextPage) {
+      return "Loading more...";
+    } else if (hasNextPage) {
+      return "Load More";
+    } else {
+      return "Nothing more to load";
+    }
+  };
+
   return (
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
@@ -82,16 +92,12 @@ const PastProductsList = () => {
             data={data.pages.flatMap((page) => page.results)}
             renderItem={({ item }) => <ProductCard item={item} />}
             keyExtractor={(item) => item.id}
-            onEndReached={() => hasNextPage && fetchNextPage()}
+            // onEndReached={() => hasNextPage && fetchNextPage()}
             onEndReachedThreshold={0.5}
             ListFooterComponent={
               <>
                 <ThemedText className="p-2 text-center">
-                  {isFetchingNextPage
-                    ? "Loading more..."
-                    : hasNextPage
-                      ? "Load More"
-                      : "Nothing more to load"}
+                  {showStatus()}
                 </ThemedText>
                 {isFetching && !isFetchingNextPage && (
                   <ThemedText className="p-2 text-center">

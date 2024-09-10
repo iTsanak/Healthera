@@ -25,6 +25,9 @@ const getGradientColors = (score: number) => {
 
 const ProductCard = ({ item }: { item: ProductsListResultsType }) => {
   const theme = useColorScheme() ?? "dark";
+
+  if (item.status === "failed") return null;
+
   const { id, result, status, created_at } = item;
   const overallScore = result.overall_score;
   const gradientColors = getGradientColors(overallScore);
