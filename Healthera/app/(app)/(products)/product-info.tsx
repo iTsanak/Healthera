@@ -22,10 +22,7 @@ const ProductsScreen = (props: Props) => {
   const theme = useColorScheme() ?? "dark";
   const [sortOrder, setSortOrder] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
-
   const params = useLocalSearchParams();
-
-  console.log(params);
 
   if (!params.result) {
     return null;
