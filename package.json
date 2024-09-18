@@ -1,0 +1,16 @@
+{
+  "name": "healthera",
+  "version": "1.0.0",
+  "description": "EXPO_PUBLIC_REST_API_SERVER=your-ngrok-http-link-here\r EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=\r EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=\r EXPO_PUBLIC_FACEBOOK_IOS_CLIENT_ID=\r EXPO_PUBLIC_FACEBOOK_ANDROID_CLIENT_ID=",
+  "main": "example.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@inquirer/prompts": "^6.0.1"
+  },
+  "type": "module"
+}
