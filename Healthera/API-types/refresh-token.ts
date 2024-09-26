@@ -10,5 +10,7 @@ export type RefreshTokenResponseData = {
 };
 
 export const REFRESH_TOKEN_URL = qs.stringifyUrl({
-  url: `${process.env.EXPO_PUBLIC_REST_API_SERVER}/api/v1/auth/default/token/refresh/`,
+  url: `${process.env.EXPO_PUBLIC_BASE_URL_REST_API}/api/v1/auth/default/token/refresh/`,
 });
+
+export const REFRESH_TOKEN_ENDPOINT = "/api/v1/auth/default/token/refresh/";

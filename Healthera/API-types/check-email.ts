@@ -10,7 +10,7 @@ export type CheckEmailRequestData = {
 };
 
 export const CHECK_EMAIL_URL = qs.stringifyUrl({
-  url: `${process.env.EXPO_PUBLIC_REST_API_SERVER}/api/v1/user/check-email/`,
+  url: `${process.env.EXPO_PUBLIC_BASE_URL_REST_API}/api/v1/user/check-email/`,
 });
 
 export const CHECK_EMAIL_ENDPOINT = qs.stringifyUrl({

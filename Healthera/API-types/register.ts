@@ -25,7 +25,7 @@ export type RegisterResponseData = {
 };
 
 export const REGISTER_URL = qs.stringifyUrl({
-  url: `${process.env.EXPO_PUBLIC_REST_API_SERVER}/api/v1/auth/register/`,
+  url: `${process.env.EXPO_PUBLIC_BASE_URL_REST_API}/api/v1/auth/register/`,
 });
 
 export const REGISTER_ENDPOINT = qs.stringifyUrl({

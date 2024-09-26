@@ -1,20 +1,19 @@
-import { View, ScrollView, useColorScheme } from "react-native";
-import React, { useState } from "react";
-import { ThemedView } from "@/components/ThemedView";
-import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
-import IconTitleArrow from "@/components/SpecialButtons/icon-title-arrow";
+import { View, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useState } from "react";
 import { router } from "expo-router";
+
 import Avatar from "@/components/Profile/avatar";
+import { ThemedView } from "@/components/ThemedView";
 import LogoutModal from "@/components/Modals/logout";
-import { useSession } from "@/providers/session-provider";
+import IconTitleArrow from "@/components/SpecialButtons/icon-title-arrow";
+import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
+import UpdateImageModal from "@/components/Profile/update-image-modal";
 
-type Props = {};
-
-const ProfileScreen = (props: Props) => {
-  const { user } = useSession();
-  const theme = useColorScheme() ?? "dark";
+const ProfileScreen = () => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
   return (
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
@@ -27,11 +26,12 @@ const ProfileScreen = (props: Props) => {
             contentContainerStyle={{ alignItems: "center" }}
           >
             <Avatar
-              imageUri="https://utfs.io/f/e96b95ab-b00a-4801-bcc7-4946f71c11f2-cnxr61.jpeg"
               showName={true}
-              user={user || undefined}
               showBadge={true}
               size={128}
+              handleBadgeClick={() => {
+                setIsImageModalOpen(true);
+              }}
             />
             <View className="mb-20 w-[80%] gap-y-5">
               <IconTitleArrow
@@ -55,6 +55,14 @@ const ProfileScreen = (props: Props) => {
                 handleOnPress={() => {
                   console.log("pressed");
                   router.push("/privacy-policy");
+                }}
+              />
+              <IconTitleArrow
+                title="Terms and Conditions"
+                icon="lock-closed"
+                handleOnPress={() => {
+                  console.log("pressed");
+                  router.push("/terms-and-conditions");
                 }}
               />
               <IconTitleArrow
@@ -90,6 +98,13 @@ const ProfileScreen = (props: Props) => {
         isVisible={isLogoutModalOpen}
         onClose={() => {
           setIsLogoutModalOpen(false);
+        }}
+      />
+
+      <UpdateImageModal
+        isVisible={isImageModalOpen}
+        onClose={() => {
+          setIsImageModalOpen(false);
         }}
       />
     </ThemedView>

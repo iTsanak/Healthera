@@ -11,5 +11,9 @@ export type GetUserResponseData = {
 };
 
 export const GET_USER_URL = qs.stringifyUrl({
-  url: `${process.env.EXPO_PUBLIC_REST_API_SERVER}/api/v1/auth/default/user/`,
+  url: `${process.env.EXPO_PUBLIC_BASE_URL_REST_API}/api/v1/auth/default/user/`,
+});
+
+export const GET_USER_ENDPOINT = qs.stringifyUrl({
+  url: `/api/v1/auth/default/user/`,
 });

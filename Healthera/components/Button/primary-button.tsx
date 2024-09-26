@@ -1,5 +1,6 @@
 import React from "react";
 import { TouchableOpacity, View, ViewProps } from "react-native";
+
 import { ThemedText, ThemedTextProps } from "../ThemedText";
 
 export type PrimaryButtonProps = {
@@ -22,20 +23,13 @@ const PrimaryButton = ({
   className, // IGNORE
 }: PrimaryButtonProps) => {
   return (
-    <View
-      style={[{ minHeight: minHeight ?? 55 }, style]}
-      className={`overflow-hidden rounded-3xl`}
-    >
+    <View style={[{ minHeight: minHeight ?? 55 }, style]} className={`overflow-hidden rounded-3xl`}>
       <TouchableOpacity
         onPress={handlePress}
         className={`flex-1 items-center justify-center bg-accent-light dark:bg-accent-dark ${isLoading ? "opacity-50" : ""}`}
         disabled={isLoading}
       >
-        <ThemedText
-          className={`${titleClassName ?? "text-xl font-bold text-white"}`}
-        >
-          {title}
-        </ThemedText>
+        <ThemedText className={`${titleClassName ?? "text-xl font-bold text-white"}`}>{title}</ThemedText>
       </TouchableOpacity>
     </View>
   );

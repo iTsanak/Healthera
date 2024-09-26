@@ -35,19 +35,13 @@ const SplashScreenAnimated = () => {
 
   // Define the loader animation
   React.useEffect(() => {
-    loaderRotation.value = withRepeat(
-      withTiming(1, { duration, easing: Easing.linear }),
-      -1,
-    );
+    loaderRotation.value = withRepeat(withTiming(1, { duration, easing: Easing.linear }), -1);
   }, []);
 
   // Generate animated styles directly in the component
   const animatedStyles = animatedValues.map((value) => {
     return useAnimatedStyle(() => ({
-      transform: [
-        { scale: value.value * 1.5 },
-        { translateY: value.value * -10 },
-      ],
+      transform: [{ scale: value.value * 1.5 }, { translateY: value.value * -10 }],
       opacity: value.value,
     }));
   });
@@ -67,15 +61,10 @@ const SplashScreenAnimated = () => {
   const theme = useColorScheme() ?? "dark";
 
   return (
-    <View
-      style={[{ backgroundColor: Colors[theme].background }, styles.container]}
-    >
+    <View style={[{ backgroundColor: Colors[theme].background }, styles.container]}>
       <View style={styles.titleContainer}>
         {letters.map((letter, index) => (
-          <Animated.Text
-            key={index}
-            style={[styles.letter, animatedStyles[index]]}
-          >
+          <Animated.Text key={index} style={[styles.letter, animatedStyles[index]]}>
             {letter}
           </Animated.Text>
         ))}

@@ -11,21 +11,17 @@ export type ProductsListResultsType = {
 
 export type UserProductsListResponseData = {
   count: number;
-  previous: any;
-  next: any;
+  previous: any; // URL to previous page or NULL
+  next: any; // URL to next page or NULL
   results: ProductsListResultsType[];
 };
 
-export const USER_PRODUCTS_LIST_URL = ({
-  pageParam,
-}: {
-  pageParam: number;
-}) => {
+export const USER_PRODUCTS_LIST_URL = ({ pageParam }: { pageParam: number }) => {
   return qs.stringifyUrl({
-    url: `${process.env.EXPO_PUBLIC_REST_API_SERVER}/user-image-analyses/?pages=${pageParam}`,
+    url: `${process.env.EXPO_PUBLIC_BASE_URL_REST_API}/user-image-analyses/?page=${pageParam}&pages=0`,
   });
 };
 
 export const USER_PRODUCTS_LIST_ENDPOINT = (pageParam: number) => {
-  return `/user-image-analyses/?pages=${pageParam}`;
+  return `/user-image-analyses/?page=${pageParam}&pages=0`;
 };

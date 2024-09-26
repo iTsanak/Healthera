@@ -17,6 +17,8 @@ export const Colors = {
     primary: "#b4e193",
     secondary: "#4b8820",
     accent: "#77d733",
+
+    cardBackground: "#4b88201a",
   },
   dark: {
     text: "#f1f1f1",
@@ -28,5 +30,7 @@ export const Colors = {
     primary: "#3e6c1e",
     secondary: "#a2df77",
     accent: "#6dcc28",
+
+    cardBackground: "#a2df771a",
   },
 };

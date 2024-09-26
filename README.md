@@ -11,7 +11,7 @@
 ## In another terminal run "ngrok http 8000" (download if you dont have ngrok)
 ## Add the ngrok generated link to your .env file below 
 
-EXPO_PUBLIC_REST_API_SERVER=your-ngrok-http-link-here
+EXPO_PUBLIC_BASE_URL_REST_API=your-ngrok-http-link-here
 EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=
 EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=
 EXPO_PUBLIC_FACEBOOK_IOS_CLIENT_ID=

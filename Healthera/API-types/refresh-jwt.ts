@@ -11,5 +11,9 @@ export type RefreshJWTResponseData = {
 };
 
 export const REFRESH_JWT_URL = qs.stringifyUrl({
-  url: `${process.env.EXPO_PUBLIC_REST_API_SERVER}/api/v1/auth/jwt/refresh/`,
+  url: `${process.env.EXPO_PUBLIC_BASE_URL_REST_API}/api/v1/auth/jwt/refresh/`,
+});
+
+export const REFRESH_JWT_ENDPOINT = qs.stringifyUrl({
+  url: `/api/v1/auth/jwt/refresh/`,
 });
