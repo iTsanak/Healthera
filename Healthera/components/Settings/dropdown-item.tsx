@@ -1,9 +1,4 @@
-import {
-  TouchableOpacity,
-  useColorScheme,
-  View,
-  ViewProps,
-} from "react-native";
+import { TouchableOpacity, useColorScheme, View, ViewProps } from "react-native";
 import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "../ThemedText";

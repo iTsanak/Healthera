@@ -1,0 +1,48 @@
+# REQUEST EXAMPLE
+GET  http://localhost:8000/user-image-analyses/?page=2&pages=0
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI3MTIwMDMxLCJpYXQiOjE3MjcxMTg1MDEsImp0aSI6ImZjYTgzNDMyZjM5YzRlNmNiNDNjMzQ2MjA0N2NlYzIwIiwidXNlcl9pZCI6ImNlOWFkMGJkLTk0MmYtNDAxMC1iZjE3LTFmYTQ3N2RjMmIzYiIsInVzZXIiOnsiaWQiOiJjZTlhZDBiZC05NDJmLTQwMTAtYmYxNy0xZmE0NzdkYzJiM2IiLCJ1c2VybmFtZSI6InRlc3QxMSIsImVtYWlsIjoidGVzdDExQHRlc3QuY29tIiwicHJvZmlsZV9pbWFnZV91cmwiOiIiLCJkb2IiOiIxOTkwLTAxLTAxIiwicGhvbmVfbnVtYmVyIjoiKzEyMzQ1Njc4OSIsImRldmljZV9pZCI6IlVuaXF1ZUlEMTIzIiwiZmlyc3RfbmFtZSI6IkpvaG4iLCJsYXN0X25hbWUiOiJTbWl0aCIsImlzX3N0YWZmIjpmYWxzZX19.GS7_AJQ3Yv42v35FwvP52udyfcbPVUDQjMkp0jIZjqc
+
+{}
+
+# OBSERVATIONS
+# page=1 is the same as page=0
+
+# RESPONSE EXAMPLE
+
+# HTTP/1.1 200 OK
+# Content-Type: application/json
+# Vary: Accept, origin
+# Allow: GET, HEAD, OPTIONS
+# X-Frame-Options: DENY
+# Content-Length: 451
+# X-Content-Type-Options: nosniff
+# Referrer-Policy: same-origin
+# Cross-Origin-Opener-Policy: same-origin
+# Server: daphne
+
+# {
+#   "count": 7,
+#   "next": "http://192.168.88.206:8000/user-image-analyses/?page=3&pages=0",
+#   "previous": "http://192.168.88.206:8000/user-image-analyses/?pages=0",
+#   "results": [
+#     {
+#       "id": "3894b567-3d5b-4a0a-8b2b-aff91e903d93",
+#       "result": {
+#         "a": "a"
+#       },
+#       "created_at": "2024-09-23T19:23:10.719339Z",
+#       "updated_at": "2024-09-23T19:23:10.719339Z",
+#       "status": "pending"
+#     },
+#     {
+#       "id": "571c3372-1774-40f1-bada-f037ddc040dc",
+#       "result": {
+#         "a": "a"
+#       },
+#       "created_at": "2024-09-23T19:23:04.193250Z",
+#       "updated_at": "2024-09-23T19:23:04.193250Z",
+#       "status": "pending"
+#     }
+#   ]
+# }

@@ -3,13 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { TouchableOpacity, useColorScheme, View } from "react-native";
 
-const SocialButton = ({
-  iconName,
-  onPress,
-}: {
-  iconName: keyof typeof Ionicons.glyphMap;
-  onPress: () => void;
-}) => {
+const SocialButton = ({ iconName, onPress }: { iconName: keyof typeof Ionicons.glyphMap; onPress: () => void }) => {
   const theme = useColorScheme() ?? "dark";
 
   return (

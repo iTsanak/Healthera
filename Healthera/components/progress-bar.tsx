@@ -1,12 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Svg, { Circle, Defs, LinearGradient, Stop } from "react-native-svg";
-import Animated, {
-  useSharedValue,
-  useAnimatedProps,
-  withTiming,
-  Easing,
-} from "react-native-reanimated";
+import Animated, { useSharedValue, useAnimatedProps, withTiming, Easing } from "react-native-reanimated";
 
 interface CircularProgressBarProps {
   percentage: number;
@@ -16,11 +11,7 @@ interface CircularProgressBarProps {
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
-  percentage,
-  size,
-  strokeWidth,
-}) => {
+const CircularProgressBar: React.FC<CircularProgressBarProps> = ({ percentage, size, strokeWidth }) => {
   const animatedValue = useSharedValue(0);
 
   React.useEffect(() => {
@@ -34,8 +25,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
   const circumference = 2 * Math.PI * radius;
 
   const animatedProps = useAnimatedProps(() => ({
-    strokeDashoffset:
-      circumference - (circumference * animatedValue.value) / 100,
+    strokeDashoffset: circumference - (circumference * animatedValue.value) / 100,
   }));
 
   let color1 = "#adfc02";
@@ -59,14 +49,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
             <Stop offset="0%" stopColor={color2} stopOpacity="1" />
           </LinearGradient>
         </Defs>
-        <Circle
-          stroke="#e6e6e6"
-          fill="none"
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          strokeWidth={strokeWidth}
-        />
+        <Circle stroke="#e6e6e6" fill="none" cx={size / 2} cy={size / 2} r={radius} strokeWidth={strokeWidth} />
         {/* <Circle
           stroke="#e6e6e6"
           fill="none"

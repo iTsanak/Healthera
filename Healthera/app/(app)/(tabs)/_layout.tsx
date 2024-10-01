@@ -1,7 +1,8 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useColorScheme, View } from "react-native";
+import { useColorScheme } from "react-native";
+
 import { Colors } from "@/constants/Colors";
 
 export default function TabsLayout() {
@@ -17,8 +18,8 @@ export default function TabsLayout() {
             case "index":
               iconName = focused ? "home" : "home-outline";
               break;
-            case "chat":
-              iconName = focused ? "chatbubble" : "chatbubble-outline";
+            case "summary":
+              iconName = focused ? "stats-chart" : "stats-chart-outline";
               break;
             case "new":
               iconName = focused ? "add-circle" : "add-circle-outline";
@@ -55,23 +56,11 @@ export default function TabsLayout() {
         },
       })}
     >
-      <Tabs.Screen
-        name="index"
-        options={{ title: "Home", headerShown: false }}
-      />
-      <Tabs.Screen
-        name="chat"
-        options={{ title: "Chat", headerShown: false }}
-      />
+      <Tabs.Screen name="index" options={{ title: "Home", headerShown: false }} />
+      <Tabs.Screen name="summary" options={{ title: "Summary", headerShown: false }} />
       <Tabs.Screen name="new" options={{ title: "New", headerShown: false }} />
-      <Tabs.Screen
-        name="calendar"
-        options={{ title: "Calendar", headerShown: false }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{ title: "Profile", headerShown: false }}
-      />
+      <Tabs.Screen name="calendar" options={{ title: "Calendar", headerShown: false }} />
+      <Tabs.Screen name="profile" options={{ title: "Profile", headerShown: false }} />
     </Tabs>
   );
 }

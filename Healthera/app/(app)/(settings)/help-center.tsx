@@ -14,18 +14,13 @@ type Props = {};
 const SettingsScreen = (props: Props) => {
   const theme = useColorScheme() ?? "dark";
   const [majorPage, setMajorPage] = useState<"FAQ" | "CONTACT US">("FAQ");
-  const [faqTopic, setFaqTopic] = useState<"POPULAR" | "GENERAL" | "SERVICES">(
-    "POPULAR",
-  );
+  const [faqTopic, setFaqTopic] = useState<"POPULAR" | "GENERAL" | "SERVICES">("POPULAR");
 
   return (
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
         <View className="flex-1 items-center">
-          <View
-            className="w-full items-center justify-center"
-            style={{ backgroundColor: Colors[theme].primary }}
-          >
+          <View className="w-full items-center justify-center" style={{ backgroundColor: Colors[theme].primary }}>
             <SimpleTopNavBar title="Help Center" />
             <ThemedText>How Can We Help You?</ThemedText>
             <SearchBox handleSearch={() => {}} />
@@ -91,15 +86,9 @@ const SettingsScreen = (props: Props) => {
               )}
 
               <View className="">
-                {faqTopic === "POPULAR" && majorPage === "FAQ" && (
-                  <PopularTopicsItems />
-                )}
-                {faqTopic === "GENERAL" && majorPage === "FAQ" && (
-                  <GeneralTopicsItems />
-                )}
-                {faqTopic === "SERVICES" && majorPage === "FAQ" && (
-                  <ServicesTopicsItems />
-                )}
+                {faqTopic === "POPULAR" && majorPage === "FAQ" && <PopularTopicsItems />}
+                {faqTopic === "GENERAL" && majorPage === "FAQ" && <GeneralTopicsItems />}
+                {faqTopic === "SERVICES" && majorPage === "FAQ" && <ServicesTopicsItems />}
 
                 {majorPage === "CONTACT US" && <ContactOptions />}
               </View>

@@ -1,13 +1,12 @@
-import React from "react";
 import { View, StyleSheet, useColorScheme } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import React from "react";
+
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
-import { LinearGradient } from "expo-linear-gradient";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import {
-  GeminiJsonType,
-  IngredientJsonType,
-} from "@/providers/analysis-provider";
+
+import { GeminiJsonType, IngredientJsonType } from "@/providers/analysis-provider";
 
 const getGradientColors = (score: number) => {
   if (score < 40) {
@@ -29,11 +28,7 @@ const IngredientCard = ({ ingredient }: { ingredient: IngredientJsonType }) => {
   return (
     <View style={styles.card} className="bg-[#4b88201a] dark:bg-[#a2df771a]">
       <View style={styles.header}>
-        <MaterialCommunityIcons
-          name="food-apple-outline"
-          size={24}
-          color={Colors[theme].accent}
-        />
+        <MaterialCommunityIcons name="food-apple-outline" size={24} color={Colors[theme].accent} />
         <ThemedText style={styles.name}>{name}</ThemedText>
       </View>
       <View style={styles.scoreContainer}>
@@ -51,9 +46,12 @@ const IngredientCard = ({ ingredient }: { ingredient: IngredientJsonType }) => {
 };
 
 const IngredientsMap = ({ result }: { result: GeminiJsonType }) => {
+  if (!result?.ingredients) {
+    return null;
+  }
   return (
     <View style={styles.container}>
-      {result?.ingredients.map((ingredient, index) => (
+      {result.ingredients.map((ingredient, index) => (
         <IngredientCard key={index} ingredient={ingredient} />
       ))}
     </View>

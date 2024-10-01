@@ -1,6 +1,6 @@
 import { ImageBackground, View, ImageSourcePropType } from "react-native";
-import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -17,12 +17,8 @@ const PrimaryPage = ({ source }: { source: ImageSourcePropType }) => {
         <SafeAreaView className="flex-1">
           <View className="relative flex-1 items-center justify-end">
             <View className="mb-[10%] w-[80%] items-center justify-end">
-              <ThemedText className="mb-5 text-6xl font-bold text-white">
-                Hello!
-              </ThemedText>
-              <ThemedText className="mb-36 text-xl text-white">
-                Let's improve your life style
-              </ThemedText>
+              <ThemedText className="mb-5 text-6xl font-bold text-white">Hello!</ThemedText>
+              <ThemedText className="mb-36 text-xl text-white">Let's improve your life style</ThemedText>
             </View>
           </View>
         </SafeAreaView>

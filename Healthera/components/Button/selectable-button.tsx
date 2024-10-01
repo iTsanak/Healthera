@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Pressable,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-  ViewProps,
-} from "react-native";
+import { Pressable, TouchableOpacity, useColorScheme, View, ViewProps } from "react-native";
 import { ThemedText, ThemedTextProps } from "../ThemedText";
 import { Colors } from "@/constants/Colors";
 
@@ -32,16 +26,11 @@ const SelectableButton = ({
 }: SelectableButtonProps) => {
   const theme = useColorScheme() ?? "dark";
   return (
-    <View
-      style={[{ minHeight: minHeight ?? 10 }, style]}
-      className={`overflow-hidden rounded-3xl`}
-    >
+    <View style={[{ minHeight: minHeight ?? 10 }, style]} className={`overflow-hidden rounded-3xl`}>
       <TouchableOpacity
         onPress={handlePress}
         style={{
-          backgroundColor: isSelected
-            ? Colors[theme].primary
-            : Colors[theme].secondary,
+          backgroundColor: isSelected ? Colors[theme].primary : Colors[theme].secondary,
         }}
         className={`flex-1 items-center justify-center ${isLoading ? "opacity-50" : ""}`}
         disabled={isLoading}

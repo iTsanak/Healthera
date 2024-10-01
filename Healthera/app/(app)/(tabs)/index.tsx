@@ -1,31 +1,34 @@
-import { View, FlatList } from "react-native";
-import React, { useEffect, useState } from "react";
-import { ThemedView } from "@/components/ThemedView";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AvatarTopNavBar from "@/components/Navigation/avatar-top-navbar";
+import React, { useEffect, useState } from "react";
+import { View, FlatList } from "react-native";
+
+import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { useSession } from "@/providers/session-provider";
-import { useAPI } from "@/providers/api-provider";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import ProductCard from "@/components/Product/product-card";
+import PrimaryButton from "@/components/Button/primary-button";
+import GreenSpinner from "@/components/LoadingScreens/green-spinner";
+import AvatarTopNavBar from "@/components/Navigation/avatar-top-navbar";
+
+import { apiSlice } from "@/redux/api/api-slice";
+import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
+import { selectUserFirstName, selectUserLastName } from "@/redux/auth/auth-slice";
 import {
-  USER_PRODUCTS_LIST_ENDPOINT,
-  UserProductsListResponseData,
-} from "@/API/user-products-list";
-import { useAnalysis } from "@/providers/analysis-provider";
+  apiSliceWithProducts,
+  productUploadComplete,
+  useGetAllUserProductsQuery,
+} from "@/redux/products/products-slice";
 
-type Props = {};
-
-const HomeScreen = (props: Props) => {
-  const { user } = useSession();
+const HomeScreen = () => {
+  const firstName = useAppSelector(selectUserFirstName);
+  const lastName = useAppSelector(selectUserLastName);
   return (
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
         <View className="flex-1 items-center">
-          <AvatarTopNavBar
-            username={`${user?.first_name} ${user?.last_name}`}
-          />
+          <AvatarTopNavBar username={`${firstName} ${lastName}`} />
           <PastProductsList />
+
+          {/* <InfiniteQueryDebugControls /> */}
         </View>
       </SafeAreaView>
     </ThemedView>
@@ -33,77 +36,90 @@ const HomeScreen = (props: Props) => {
 };
 
 const PastProductsList = () => {
-  const { api } = useAPI();
-  const { status: analysisStatus } = useAnalysis();
-  const fetchProjects = async ({ pageParam }: { pageParam: number }) => {
-    const res: UserProductsListResponseData = await api
-      .get(USER_PRODUCTS_LIST_ENDPOINT(pageParam))
-      .then((res) => res.data);
-    return res;
-  };
-
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
-    status,
-    refetch,
-  } = useInfiniteQuery({
-    queryKey: ["projects"],
-    queryFn: fetchProjects,
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.next,
-  });
+  const [page, setPage] = useState(1);
+  const { data, error, isLoading, isFetching, refetch } = useGetAllUserProductsQuery(page);
+  const currPage_RTK = data?.page ?? 1;
 
   useEffect(() => {
-    if (analysisStatus === "completed") {
-      refetch();
+    if (data?.reset) {
+      if (page != 1) {
+        setPage(1);
+      } else {
+        refetch();
+      }
     }
-  }, [analysisStatus]);
+  }, [data?.reset, data?.results.length]);
 
-  if (status === "pending" || status === "error") {
-    return (
-      <ThemedView className="flex-1 items-center justify-center">
-        <ThemedText>
-          {status === "pending" ? "Loading..." : `Error: ${error?.message}`}
-        </ThemedText>
-      </ThemedView>
-    );
-  }
+  const loadMore = () => {
+    if (data?.next && !isLoading && !isFetching && !data?.reset) {
+      setPage(currPage_RTK + 1);
+    }
+  };
+
+  // console.log("data", data?.page, currPage_RTK, page, data?.reset, isUninitialized, data?.results.length);
+
+  if (isLoading) return <CustomLoading />;
+  if (error) return <ThemedText>Error: Sorry, something went wrong while getting your data</ThemedText>;
 
   return (
     <ThemedView className="flex-1">
       <SafeAreaView className="flex-1">
         <View className="flex-1">
           <FlatList
-            data={data.pages.flatMap((page) => page.results)}
-            renderItem={({ item }) => <ProductCard item={item} />}
+            data={data?.results.flatMap((page) => page)}
+            renderItem={({ item }) => <ProductCard product={item} />}
             keyExtractor={(item) => item.id}
-            onEndReached={() => hasNextPage && fetchNextPage()}
+            onEndReached={() => loadMore()}
             onEndReachedThreshold={0.5}
-            ListFooterComponent={
-              <>
-                <ThemedText className="p-2 text-center">
-                  {isFetchingNextPage
-                    ? "Loading more..."
-                    : hasNextPage
-                      ? "Load More"
-                      : "Nothing more to load"}
-                </ThemedText>
-                {isFetching && !isFetchingNextPage && (
-                  <ThemedText className="p-2 text-center">
-                    Fetching...
-                  </ThemedText>
-                )}
-              </>
-            }
+            ListFooterComponent={<>{isFetching && <CustomLoading />}</>}
           />
         </View>
       </SafeAreaView>
     </ThemedView>
+  );
+};
+
+const CustomLoading = () => {
+  return (
+    <View className="items-center justify-center">
+      <ThemedText className="p-2 text-center">Loading...</ThemedText>
+      <GreenSpinner />
+    </View>
+  );
+};
+
+const InfiniteQueryDebugControls = () => {
+  const dispatch = useAppDispatch();
+  return (
+    <>
+      <PrimaryButton
+        title="test tag"
+        handlePress={() => {
+          dispatch(
+            apiSlice.util.invalidateTags([
+              { type: "UserImageAnalysis", id: "LIST" },
+              { type: "RecentUserImageAnalysis", id: "LIST" },
+            ]),
+          );
+        }}
+      />
+      <PrimaryButton
+        title="test delete"
+        handlePress={() => {
+          dispatch(
+            apiSliceWithProducts.util.updateQueryData("getAllUserProducts", 1, (draft) => {
+              return { ...draft, reset: true, results: [], page: 0 };
+            }),
+          );
+        }}
+      />
+      <PrimaryButton
+        title="test update"
+        handlePress={() => {
+          dispatch(productUploadComplete({ uuid: "1" }));
+        }}
+      />
+    </>
   );
 };
 

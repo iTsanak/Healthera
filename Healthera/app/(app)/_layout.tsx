@@ -1,29 +1,43 @@
-import SplashScreenPlain from "@/components/LoadingScreens/splash-screen-plain";
-import { AnalysisProvider } from "@/providers/analysis-provider";
-import { useSession } from "@/providers/session-provider";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Redirect, Stack } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+
+import { AnalysisProvider } from "@/providers/analysis-provider";
+import GreenSpinner from "@/components/LoadingScreens/green-spinner";
+
+import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
+import { loadUser, selectAuthInitialLoadStatus, selectUserId } from "@/redux/auth/auth-slice";
+import { loadTokens, selectAuthSecretsInitialLoadStatus } from "@/redux/auth-secrets/auth-secrets-slice";
 
 export default function AppLayout() {
-  const { user, loadStoredUser } = useSession();
-  const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const userId = useAppSelector(selectUserId);
+  const userLoadingStatus = useAppSelector(selectAuthInitialLoadStatus);
+  const authTokensLoadingStatus = useAppSelector(selectAuthSecretsInitialLoadStatus);
 
   useEffect(() => {
-    const validateUser = async () => {
-      if (!user) {
-        await loadStoredUser();
-      }
-      setLoading(false);
-    };
+    if (userLoadingStatus === "idle" && authTokensLoadingStatus === "idle") {
+      const initData = async () => {
+        await Promise.all([dispatch(loadUser()), dispatch(loadTokens())]);
+      };
+      initData();
+    }
+  }, [dispatch, userLoadingStatus, authTokensLoadingStatus]);
 
-    validateUser();
-  }, [user, loadStoredUser]);
-
-  if (loading) {
-    return <SplashScreenPlain />;
+  if (
+    userLoadingStatus === "idle" ||
+    userLoadingStatus === "loading" ||
+    authTokensLoadingStatus === "idle" ||
+    authTokensLoadingStatus === "loading"
+  ) {
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <GreenSpinner />
+      </SafeAreaView>
+    );
   }
 
-  if (!user) {
+  if (!userId) {
     return <Redirect href="/onboarding" />;
   }
 
@@ -34,6 +48,7 @@ export default function AppLayout() {
         <Stack.Screen name="(profile)" options={{ headerShown: false }} />
         <Stack.Screen name="(settings)" options={{ headerShown: false }} />
         <Stack.Screen name="(products)" options={{ headerShown: false }} />
+        <Stack.Screen name="(notifications)" options={{ headerShown: false }} />
       </Stack>
     </AnalysisProvider>
   );

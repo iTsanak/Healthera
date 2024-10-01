@@ -1,10 +1,4 @@
-import {
-  Switch,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-  ViewProps,
-} from "react-native";
+import { Switch, TouchableOpacity, useColorScheme, View, ViewProps } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ThemedText } from "../ThemedText";
 import { Colors } from "@/constants/Colors";
@@ -16,12 +10,7 @@ type Props = {
   handleOnPress: (value: boolean) => void;
 };
 
-const TitleSwitchButton = ({
-  title,
-  style,
-  isActive,
-  handleOnPress,
-}: Props) => {
+const TitleSwitchButton = ({ title, style, isActive, handleOnPress }: Props) => {
   const theme = useColorScheme() ?? "dark";
   const [isEnabled, setIsEnabled] = useState(isActive);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);

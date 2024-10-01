@@ -55,6 +55,21 @@ class CustomLoginView(LoginView):
         if api_settings.SESSION_LOGIN:
             self.process_login()
 
+    def get_response(self):
+        response = super().get_response()
+
+        user_data = {
+            "pk": str(self.user.pk),
+            "username": self.user.username,
+            "email": self.user.email,
+            "first_name": self.user.first_name,
+            "last_name": self.user.last_name,
+            "imageURL": self.user.profile_image_url,
+        }
+
+        response.data["user"] = user_data
+        return response
+
     def post(self, request, *args, **kwargs):
         self.request = request
         self.serializer = self.get_serializer(data=self.request.data)

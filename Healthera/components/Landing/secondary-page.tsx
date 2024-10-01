@@ -1,7 +1,7 @@
-import { Dimensions, View } from "react-native";
-import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Dimensions, View } from "react-native";
 import { SvgProps } from "react-native-svg";
+import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -21,19 +21,11 @@ const SecondaryPageTemplate = ({ Svg }: { Svg: React.FC<SvgProps> }) => {
           <View className="flex-1 items-center justify-end">
             <View className="mb-[10%] w-[80%] items-center justify-end">
               <View className="bg-transparent">
-                <Svg
-                  width={width * 0.8}
-                  height={height * 0.4}
-                  className="mb-10"
-                />
+                <Svg width={width * 0.8} height={height * 0.4} className="mb-10" />
               </View>
 
-              <ThemedText className="mb-5 text-6xl font-bold text-white">
-                Hello!
-              </ThemedText>
-              <ThemedText className="mb-36 text-xl text-white">
-                Let's improve your life style
-              </ThemedText>
+              <ThemedText className="mb-5 text-6xl font-bold text-white">Hello!</ThemedText>
+              <ThemedText className="mb-36 text-xl text-white">Let's improve your life style</ThemedText>
             </View>
           </View>
         </SafeAreaView>
