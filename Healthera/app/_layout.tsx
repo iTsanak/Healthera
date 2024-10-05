@@ -1,20 +1,20 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { useEffect } from "react";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import "react-native-reanimated";
+
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
-import "react-native-reanimated";
+import { Try } from "expo-router/build/views/Try";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import { Provider } from "react-redux";
+import { store } from "@/redux/store";
+
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { SessionProvider } from "@/providers/session-provider";
+
 import ErrorBoundary from "@/components/errors/simple-error-boundary";
-import { Try } from "expo-router/build/views/Try";
-import { APIProvider } from "@/providers/api-provider";
 
 const queryClient = new QueryClient();
 
@@ -39,25 +39,18 @@ export default function RootLayout() {
 
   return (
     <Try catch={ErrorBoundary}>
-      <QueryClientProvider client={queryClient}>
-        <SessionProvider>
-          <APIProvider>
-            <ThemeProvider
-              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
-              <Stack>
-                <Stack.Screen name="(app)" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="(onboarding)"
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="+not-found" />
-              </Stack>
-            </ThemeProvider>
-          </APIProvider>
-        </SessionProvider>
-      </QueryClientProvider>
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+            <Stack>
+              <Stack.Screen name="(app)" options={{ headerShown: false }} />
+              <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </Provider>
     </Try>
   );
 }

@@ -1,10 +1,4 @@
-import {
-  View,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  useColorScheme,
-} from "react-native";
+import { View, KeyboardAvoidingView, Platform, ScrollView, useColorScheme } from "react-native";
 import React from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,35 +9,40 @@ import * as z from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Avatar from "@/components/Profile/avatar";
+import { useAppSelector } from "@/redux/redux-hooks";
+import { selectUserFirstName, selectUserLastName, useChangeNameMutation } from "@/redux/auth/auth-slice";
+import { router } from "expo-router";
 
 type Props = {};
 
 const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().min(1, "Email is required").email("Invalid Email format"),
-  phoneNumber: z.string().min(1, "Phone number is required"),
-  dob: z.string().min(1, "Date of Birth is required"),
+  fist_name: z.string().min(1, "First Name is required"),
+  last_name: z.string(),
 });
 
 const ProfileScreen = (props: Props) => {
   const theme = useColorScheme() ?? "dark";
+  const firstName = useAppSelector(selectUserFirstName);
+  const lastName = useAppSelector(selectUserLastName);
+
+  const [uploadNewName, { isError, isLoading, isSuccess }] = useChangeNameMutation();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      phoneNumber: "",
-      email: "",
-      dob: "",
+      fist_name: firstName ?? "",
+      last_name: lastName ?? "",
     },
   });
 
-  const isLoading = form.formState.isSubmitting;
+  const aggIsLoading = form.formState.isSubmitting || isLoading;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       console.log("SUBMITTING UPDATE PROFILE FORM", values);
+      await uploadNewName({ first_name: values.fist_name, last_name: values.last_name }).unwrap();
       form.reset();
+      router.navigate("/profile");
     } catch (error) {
       console.log(error);
     }
@@ -51,10 +50,7 @@ const ProfileScreen = (props: Props) => {
 
   return (
     <ThemedView className="flex-1">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
         <SafeAreaView className="flex-1">
           <View className="flex-1 items-center">
             <SimpleTopNavBar title="Profile" />
@@ -64,23 +60,16 @@ const ProfileScreen = (props: Props) => {
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={{ alignItems: "center" }}
             >
-              <Avatar
-                imageUri="https://utfs.io/f/e96b95ab-b00a-4801-bcc7-4946f71c11f2-cnxr61.jpeg"
-                showBadge={true}
-                size={128}
-              />
+              <Avatar size={128} />
               <View className="w-[80%]">
                 <Controller
                   control={form.control}
-                  name="name"
-                  disabled={isLoading}
-                  render={({
-                    field: { value, onChange, onBlur },
-                    fieldState: { error },
-                  }) => (
+                  name="fist_name"
+                  disabled={aggIsLoading}
+                  render={({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
                     <FormTextField
-                      title="Full Name"
-                      placeholder="John Smith..."
+                      title="First Name"
+                      placeholder="John"
                       handleTextChange={onChange}
                       value={value}
                       className="mt-2"
@@ -90,67 +79,23 @@ const ProfileScreen = (props: Props) => {
                 />
                 <Controller
                   control={form.control}
-                  name="email"
-                  disabled={isLoading}
-                  render={({
-                    field: { value, onChange, onBlur },
-                    fieldState: { error },
-                  }) => (
+                  name="last_name"
+                  disabled={aggIsLoading}
+                  render={({ field: { value, onChange, onBlur }, fieldState: { error } }) => (
                     <FormTextField
-                      title="Email"
-                      placeholder="email@domain.com"
+                      title="Last Name"
+                      placeholder="Smith"
                       handleTextChange={onChange}
                       value={value}
-                      className="mt-4"
+                      className="mt-2"
                       error={error}
-                      keyboardType="email-address"
-                    />
-                  )}
-                />
-                <Controller
-                  control={form.control}
-                  name="phoneNumber"
-                  disabled={isLoading}
-                  render={({
-                    field: { value, onChange, onBlur },
-                    fieldState: { error },
-                  }) => (
-                    <FormTextField
-                      title="Mobile Number"
-                      placeholder="123-123-1234"
-                      handleTextChange={onChange}
-                      value={value}
-                      className="mt-4"
-                      error={error}
-                      keyboardType="phone-pad"
-                    />
-                  )}
-                />
-                <Controller
-                  control={form.control}
-                  name="dob"
-                  disabled={isLoading}
-                  render={({
-                    field: { value, onChange, onBlur },
-                    fieldState: { error },
-                  }) => (
-                    <FormTextField
-                      title="Date Of Birth"
-                      placeholder="DD/MM/YYYY"
-                      handleTextChange={onChange}
-                      value={value}
-                      className="mt-4"
-                      error={error}
-                      keyboardType="number-pad"
                     />
                   )}
                 />
 
                 <View className="mb-10 mt-4 items-center">
                   <PrimaryButton
-                    handlePress={form.handleSubmit((data: any) =>
-                      onSubmit(data),
-                    )}
+                    handlePress={form.handleSubmit((data: any) => onSubmit(data))}
                     title="Update Profile"
                     className="my-4 w-48"
                   />

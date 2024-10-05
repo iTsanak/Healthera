@@ -1,9 +1,4 @@
-import {
-  TouchableOpacity,
-  useColorScheme,
-  View,
-  ViewProps,
-} from "react-native";
+import { TouchableOpacity, useColorScheme, View, ViewProps } from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "../ThemedText";
@@ -36,11 +31,7 @@ const IconTitleArrow = ({ icon, title, style, handleOnPress }: Props) => {
           <ThemedText className="text-lg">{title}</ThemedText>
         </View>
         <View className="items-center justify-center rounded-full p-2">
-          <Ionicons
-            name="chevron-forward-outline"
-            size={25}
-            color={Colors[theme].text}
-          />
+          <Ionicons name="chevron-forward-outline" size={25} color={Colors[theme].text} />
         </View>
       </TouchableOpacity>
     </View>

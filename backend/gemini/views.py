@@ -81,3 +81,16 @@ class UserImageAnalysisListView(APIView):
 
         serializer = ImageAnalysisSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
+
+
+class RecentUserImageAnalysisListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Get the 50 most recent "completed" items
+        user_analyses = ImageAnalysis.objects.filter(
+            user=request.user, status='completed'
+        ).order_by('-created_at')[:50]
+
+        serializer = ImageAnalysisSerializer(user_analyses, many=True)
+        return Response(serializer.data)

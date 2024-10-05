@@ -13,10 +13,7 @@ const SearchBox = ({ handleSearch }: Props) => {
 
   return (
     <View className="w-full items-center justify-center">
-      <View
-        className="my-8 h-12 w-[95%] rounded-full"
-        style={{ backgroundColor: Colors["dark"].text }}
-      >
+      <View className="my-8 h-12 w-[95%] rounded-full" style={{ backgroundColor: Colors["dark"].text }}>
         <Pressable
           onPress={async () => {
             console.log("Search Pressed");

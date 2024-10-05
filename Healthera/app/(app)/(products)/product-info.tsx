@@ -1,31 +1,25 @@
-import {
-  View,
-  ScrollView,
-  useColorScheme,
-  TouchableOpacity,
-} from "react-native";
-import React, { useState } from "react";
-import { ThemedView } from "@/components/ThemedView";
+import { View, ScrollView, useColorScheme, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ThemedText } from "@/components/ThemedText";
-import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "@/constants/Colors";
-import CircularProgressBar from "@/components/progress-bar";
-import { GeminiJsonType } from "@/providers/analysis-provider";
-import IngredientsMap from "@/components/Product/ingredient-card";
 import { useLocalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
 
-type Props = {};
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import CircularProgressBar from "@/components/progress-bar";
+import IngredientsMap from "@/components/Product/ingredient-card";
+import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
 
-const ProductsScreen = (props: Props) => {
+import { Colors } from "@/constants/Colors";
+
+import { GeminiJsonType } from "@/providers/analysis-provider";
+
+const ProductsScreen = () => {
   const theme = useColorScheme() ?? "dark";
   const [sortOrder, setSortOrder] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
 
   const params = useLocalSearchParams();
-
-  console.log(params);
 
   if (!params.result) {
     return null;
@@ -51,9 +45,7 @@ const ProductsScreen = (props: Props) => {
             >
               <ThemedText className="mr-1">A</ThemedText>
               <Ionicons
-                name={
-                  sortOrder ? "arrow-forward-outline" : "arrow-back-outline"
-                }
+                name={sortOrder ? "arrow-forward-outline" : "arrow-back-outline"}
                 size={15}
                 color={Colors[theme].text}
               />
@@ -67,11 +59,7 @@ const ProductsScreen = (props: Props) => {
                 setIsFavorite(!isFavorite);
               }}
             >
-              <Ionicons
-                name={isFavorite ? "star" : "star-outline"}
-                size={20}
-                color={Colors[theme].text}
-              />
+              <Ionicons name={isFavorite ? "star" : "star-outline"} size={20} color={Colors[theme].text} />
             </TouchableOpacity>
 
             <View className="flex-1 items-end justify-center">
@@ -83,11 +71,7 @@ const ProductsScreen = (props: Props) => {
                     console.log("pressed");
                   }}
                 >
-                  <Ionicons
-                    name="search-outline"
-                    size={20}
-                    color={Colors[theme].text}
-                  />
+                  <Ionicons name="search-outline" size={20} color={Colors[theme].text} />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={{ backgroundColor: Colors[theme].accent }}
@@ -96,11 +80,7 @@ const ProductsScreen = (props: Props) => {
                     console.log("pressed");
                   }}
                 >
-                  <Ionicons
-                    name="filter"
-                    size={20}
-                    color={Colors[theme].text}
-                  />
+                  <Ionicons name="filter" size={20} color={Colors[theme].text} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -118,19 +98,10 @@ const ProductsScreen = (props: Props) => {
                 className="items-center justify-center rounded-3xl p-4 py-8"
               >
                 <View className="h-52 w-44 items-center justify-center">
-                  <CircularProgressBar
-                    percentage={healthScore}
-                    size={160}
-                    strokeWidth={10}
-                  />
+                  <CircularProgressBar percentage={healthScore} size={160} strokeWidth={10} />
                 </View>
-                <ThemedText className="mb-4 text-4xl font-bold">
-                  {healthScore}/100
-                </ThemedText>
-                <View
-                  style={{ backgroundColor: Colors[theme].secondary }}
-                  className="rounded-3xl p-2 px-4"
-                >
+                <ThemedText className="mb-4 text-4xl font-bold">{healthScore}/100</ThemedText>
+                <View style={{ backgroundColor: Colors[theme].secondary }} className="rounded-3xl p-2 px-4">
                   <ThemedText style={{ color: Colors[theme].background }}>
                     {result?.additional_notes || "Analysis complete"}
                   </ThemedText>
@@ -138,15 +109,6 @@ const ProductsScreen = (props: Props) => {
               </View>
 
               {result && <IngredientsMap result={result} />}
-
-              {/* {result?.ingredients.map((ingredient, index) => (
-                <View key={index} className="mt-10">
-                  <ThemedText style={{ color: Colors[theme].accent }}>
-                    {ingredient[0]} (Score: {ingredient[1]})
-                  </ThemedText>
-                  <ThemedText className="text-sm">{ingredient[2]}</ThemedText>
-                </View>
-              ))} */}
             </View>
           </ScrollView>
         </View>

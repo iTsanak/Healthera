@@ -8,8 +8,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'default-secret-key')
 DEBUG = os.getenv('DEBUG', 'True').lower() in ['true', '1', 'yes']
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
-CSRF_TRUSTED_ORIGINS = os.getenv(
-    'CSRF_TRUSTED_ORIGINS', 'http://localhost:8000').split(',')
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:8000').split(',')
 
 # Application definition
 
@@ -165,6 +164,7 @@ REST_AUTH = {
 
     'JWT_TOKEN_CLAIMS_SERIALIZER': 'auth_server.serializers.MyTokenObtainPairSerializer',
     'JWT_SERIALIZER': 'dj_rest_auth.serializers.JWTSerializer',
+    'OLD_PASSWORD_FIELD_ENABLED': False,
 }
 
 
@@ -209,3 +209,7 @@ EMAIL_BACKEND = os.getenv(
     'EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 
 ASGI_APPLICATION = 'core.asgi.application'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

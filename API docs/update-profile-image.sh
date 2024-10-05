@@ -1,0 +1,8 @@
+curl -X POST -F "image=@OG.jpg" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI3MjYzNzkwLCJpYXQiOjE3MjcyNjMxOTAsImp0aSI6ImNjNDVjOWJjNmEwMDQ5ZmRhZDBkNDg4NDNhNmNkNDQxIiwidXNlcl9pZCI6IjJhYjc4OWU2LTZkM2ItNGY1OS1iZjUwLTUyOGY1NWVlYjljNyIsInVzZXIiOnsiaWQiOiIyYWI3ODllNi02ZDNiLTRmNTktYmY1MC01MjhmNTVlZWI5YzciLCJ1c2VybmFtZSI6InRlc3QxIiwiZW1haWwiOiJ0ZXN0MUB0ZXN0LmNvbSIsInByb2ZpbGVfaW1hZ2VfdXJsIjoiIiwiZG9iIjpudWxsLCJwaG9uZV9udW1iZXIiOiIiLCJkZXZpY2VfaWQiOiJTYW1lQXNSZWdpc3Rlck9yTmV3T25lIiwiZmlyc3RfbmFtZSI6IkpvaG4iLCJsYXN0X25hbWUiOiJTbW90aGVyIiwiaXNfc3RhZmYiOmZhbHNlfX0.-MM4A2L62YIDec1aeYp6lndA3RPzduoKB_w8YuYMgZ8" \
+  http://192.168.88.206:8000/api/v1/user/update-profile-image/
+
+
+# Answer Example
+#
+# {"profile_image_url":"/media/profile_images/de4e29d7-a150-4de5-8f56-3d38dfcd51a7.jpg"}

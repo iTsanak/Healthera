@@ -6,12 +6,7 @@ type Props = {};
 
 const SplashScreenPlain = (props: Props) => {
   const theme = useColorScheme() ?? "dark";
-  return (
-    <View
-      className="flex-1"
-      style={{ backgroundColor: Colors[theme].background }}
-    />
-  );
+  return <View className="flex-1" style={{ backgroundColor: Colors[theme].background }} />;
 };
 
 export default SplashScreenPlain;

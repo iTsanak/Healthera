@@ -1,37 +1,27 @@
-import React, { useState } from "react";
-import {
-  View,
-  ScrollView,
-  useColorScheme,
-  TouchableOpacity,
-  Image,
-  Alert,
-} from "react-native";
-import { ThemedView } from "@/components/ThemedView";
+import { View, ScrollView, useColorScheme, TouchableOpacity, Image, Alert, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as ImageManipulator from "expo-image-manipulator";
+import * as ImagePicker from "expo-image-picker";
+import React, { useState } from "react";
+import { router } from "expo-router";
+
+import logAxiosError from "@/lib/axios-better-errors";
+
+import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import SimpleTopNavBar from "@/components/Navigation/simple-top-navbar";
+
 import { Colors } from "@/constants/Colors";
-import * as ImagePicker from "expo-image-picker";
-import * as ImageManipulator from "expo-image-manipulator";
-import { UPLOAD_URL } from "@/API/upload";
+
 import { useAnalysis } from "@/providers/analysis-provider";
-import { useAPI } from "@/providers/api-provider";
-import logAxiosError from "@/lib/axios-better-errors";
-import { ActivityIndicator } from "react-native";
 
+import { useUploadNewProductMutation } from "@/redux/products/products-slice";
 
-
-
-type Props = {};
-
-const NewScreen = (props: Props) => {
+const NewScreen = () => {
   const theme = useColorScheme() ?? "dark";
-  const [sortOrder, setSortOrder] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const { api } = useAPI();
+
+  const [uploadNewProduct, { isError, isLoading, isSuccess }] = useUploadNewProductMutation();
 
   const { setUuid } = useAnalysis();
 
@@ -41,14 +31,11 @@ const NewScreen = (props: Props) => {
       alert("Sorry, we need camera permissions to make this work!");
     }
 
-    const { status: libraryStatus } =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const { status: libraryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (libraryStatus !== "granted") {
       alert("Sorry, we need photo library permissions to make this work!");
     }
   };
-
-  
 
   React.useEffect(() => {
     requestPermissions();
@@ -56,20 +43,18 @@ const NewScreen = (props: Props) => {
 
   const resizeImage = async (uri: string) => {
     try {
-      const manipResult = await ImageManipulator.manipulateAsync(
-        uri,
-        [{ resize: { width: 800 } }], // Adjust the width as needed
-        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }, // Compress image to reduce size
-      );
+      const manipResult = await ImageManipulator.manipulateAsync(uri, [{ resize: { width: 800 } }], {
+        compress: 0.7,
+        format: ImageManipulator.SaveFormat.JPEG,
+      });
       return manipResult.uri;
     } catch (error) {
-      console.error("[NEW_SCREEN]: Error resizing image:", error);
+      console.log("[NEW_SCREEN]: Error resizing image:", error);
       return uri;
     }
   };
 
-  const uploadImage = async (fromCamera: boolean) => {
-   
+  const pickImage = async (fromCamera: boolean) => {
     let result;
     if (fromCamera) {
       result = await ImagePicker.launchCameraAsync({
@@ -86,45 +71,39 @@ const NewScreen = (props: Props) => {
         quality: 1,
       });
     }
-    setIsLoading(true);
+
     if (!result.canceled) {
       const resizedUri = await resizeImage(result.assets[0].uri);
       setSelectedImage(resizedUri);
-      // Send the resized image to the backend
-      const formData = new FormData();
-      formData.append("image", {
-        uri: result.assets[0].uri,
-        name: "image.jpg",
-        type: "image/jpeg",
-      } as any);
+    }
+  };
 
-      try {
-        const response = await api.post(UPLOAD_URL, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+  const uploadImage = async () => {
+    if (!selectedImage) return;
+    try {
+      const response = await uploadNewProduct({ imageUri: selectedImage }).unwrap();
 
-        const data = response.data;
-        console.log(data);
-        setUuid(data.uuid); // This will trigger the polling
-        console.log("[NEW_SCREEN]: Image uploaded successfully");
-        setIsLoading(false); // End loading
-      } catch (error) {
-        console.log("[NEW_SCREEN]: Error uploading image", error);
-        logAxiosError(error, "[NEW_SCREEN]: Error uploading image");
-      } 
-    } else {
-      setIsLoading(false); // End loading if canceled
+      setUuid(response.uuid);
+      console.log("[NEW_SCREEN]: Image uploaded successfully", `image uuid: ${response.uuid}`);
+      setSelectedImage(null);
+      router.navigate("/(app)/(tabs)/");
+    } catch (error) {
+      console.log("[NEW_SCREEN]: Error uploading image", error);
+      logAxiosError(error, "[NEW_SCREEN]: Error uploading image");
+      Alert.alert("Error", "Failed to upload image. Please try again.");
     }
   };
 
   const showImagePickerOptions = () => {
     Alert.alert("Upload Image", "Choose an option", [
-      { text: "Camera", onPress: () => uploadImage(true) },
-      { text: "Gallery", onPress: () => uploadImage(false) },
+      { text: "Camera", onPress: () => pickImage(true) },
+      { text: "Gallery", onPress: () => pickImage(false) },
       { text: "Cancel", style: "cancel" },
     ]);
+  };
+
+  const cancelUpload = () => {
+    setSelectedImage(null);
   };
 
   return (
@@ -143,38 +122,51 @@ const NewScreen = (props: Props) => {
                 style={{ backgroundColor: Colors[theme].primary }}
                 className="items-center justify-center rounded-3xl p-4 py-8"
               >
-                <ThemedText className="mb-4 text-lg font-bold">
-                  Upload picture of the ingredients
-                </ThemedText>
+                <ThemedText className="mb-4 text-lg font-bold">Upload picture of the ingredients</ThemedText>
                 <ThemedText className="mb-4">Scan items</ThemedText>
-                <TouchableOpacity
-                  style={{ backgroundColor: Colors[theme].secondary }}
-                  className="rounded-3xl p-2 px-4"
-                  onPress={showImagePickerOptions}
-                >
-                  <ThemedText style={{ color: Colors[theme].background }}>
-                    Upload
-                  </ThemedText>
-                </TouchableOpacity>
+                {!selectedImage && (
+                  <TouchableOpacity
+                    style={{ backgroundColor: Colors[theme].secondary }}
+                    className="rounded-3xl p-2 px-4"
+                    onPress={showImagePickerOptions}
+                  >
+                    <ThemedText style={{ color: Colors[theme].background }}>Upload</ThemedText>
+                  </TouchableOpacity>
+                )}
               </View>
               {isLoading ? (
                 <View style={{ marginTop: 20, marginBottom: 20 }}>
-                  {/* Display the loading animation */}
                   <ActivityIndicator size="large" color={Colors[theme].secondary} />
                 </View>
               ) : (
                 selectedImage && (
-                  <Image
-                    source={{ uri: selectedImage }}
-                    style={{
-                      width: 200,
-                      height: 200,
-                      marginTop: 20,
-                      borderRadius: 10,
-                      marginBottom: 20,
-                      alignSelf: "center",
-                    }}
-                  />
+                  <View style={{ alignItems: "center", marginTop: 20 }}>
+                    <Image
+                      source={{ uri: selectedImage }}
+                      style={{
+                        width: 200,
+                        height: 200,
+                        borderRadius: 10,
+                        marginBottom: 20,
+                      }}
+                    />
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                      <TouchableOpacity
+                        style={{ backgroundColor: "#ff0000", padding: 10, borderRadius: 5 }}
+                        onPress={cancelUpload}
+                        disabled={isLoading}
+                      >
+                        <ThemedText style={{ color: Colors[theme].background }}>Cancel</ThemedText>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{ backgroundColor: "#00ff00", padding: 10, borderRadius: 5 }}
+                        onPress={uploadImage}
+                        disabled={isLoading}
+                      >
+                        <ThemedText style={{ color: Colors[theme].background }}>Confirm Upload</ThemedText>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
                 )
               )}
             </View>
@@ -184,4 +176,5 @@ const NewScreen = (props: Props) => {
     </ThemedView>
   );
 };
+
 export default NewScreen;

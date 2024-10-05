@@ -25,15 +25,8 @@ export default function OnboardingScreen() {
     <View className="flex-1">
       <StatusBar style="light" />
 
-      <PagerView
-        className="flex-1"
-        initialPage={0}
-        onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}
-      >
-        <PrimaryPage
-          key={1}
-          source={require("@/assets/images/onboarding/background-1.jpg")}
-        />
+      <PagerView className="flex-1" initialPage={0} onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}>
+        <PrimaryPage key={1} source={require("@/assets/images/onboarding/background-1.jpg")} />
         <SecondaryPageTemplate key={2} Svg={SomethingSVG} />
         <SecondaryPageTemplate key={3} Svg={LoveItSVG} />
         <SecondaryPageTemplate key={4} Svg={UnlockSVG} />
@@ -44,11 +37,7 @@ export default function OnboardingScreen() {
       </View>
 
       <View className="absolute bottom-6 left-0 right-0 items-center">
-        <PrimaryButton
-          handlePress={() => setIsModalVisible(true)}
-          title="GET STARTED"
-          className="w-[80%]"
-        />
+        <PrimaryButton handlePress={() => setIsModalVisible(true)} title="GET STARTED" className="w-[80%]" />
       </View>
 
       <GetStartedModal isVisible={isModalVisible} onClose={handleCloseModal} />

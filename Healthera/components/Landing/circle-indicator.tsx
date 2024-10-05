@@ -1,13 +1,7 @@
-import { Colors } from "@/constants/Colors";
 import React from "react";
 import { View } from "react-native";
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withSequence,
-  withTiming,
-} from "react-native-reanimated";
+
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 
 const INDICATOR_SIZE = 12;
 const INDICATOR_SPACING = 8;
@@ -66,7 +60,7 @@ const CircleIndicator = ({ currentPage }: { currentPage: number }) => {
               width: INDICATOR_SIZE,
               height: INDICATOR_SIZE,
               borderRadius: INDICATOR_SIZE / 2,
-              backgroundColor: Colors.light.secondary,
+              backgroundColor: "white",
               left: 0,
             },
             activeBallStyle,
